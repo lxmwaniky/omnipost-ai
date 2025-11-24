@@ -61,6 +61,31 @@ const getPlatformIcon = (platform: Platform) => {
    }
 };
 
+const LoadingMessage = () => {
+    const messages = [
+        "Dreaming up visuals...",
+        "Mixing colors...",
+        "Applying style...",
+        "Rendering pixels...",
+        "Adding magic...",
+        "Polishing details..."
+    ];
+    const [index, setIndex] = useState(0);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setIndex((prev) => (prev + 1) % messages.length);
+        }, 2000);
+        return () => clearInterval(interval);
+    }, []);
+
+    return (
+        <span className="text-xs font-medium text-gray-500 animate-pulse min-w-[120px] text-center">
+            {messages[index]}
+        </span>
+    );
+};
+
 const PlatformCard: React.FC<PlatformCardProps> = ({ post, isLoading, isGenerating, platform, onDownload }) => {
   const [copied, setCopied] = useState(false);
   const [editedContent, setEditedContent] = useState('');
@@ -181,7 +206,7 @@ const PlatformCard: React.FC<PlatformCardProps> = ({ post, isLoading, isGenerati
 
         {/* Generated Image */}
       <div className="relative aspect-video bg-black/30 border-y border-white/10 overflow-hidden group">
-        {isGenerating ? ( // Changed from isLoading to isGenerating for image specific loading
+        {isGenerating ? ( 
           <div className="absolute inset-0 flex flex-col items-center justify-center">
              <div className="w-full h-full bg-white/5 animate-pulse relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer" />
@@ -190,7 +215,7 @@ const PlatformCard: React.FC<PlatformCardProps> = ({ post, isLoading, isGenerati
                 <div className="p-3 bg-white/5 rounded-full animate-bounce">
                     <ImageIcon size={24} className="text-gray-500" />
                 </div>
-                <span className="text-xs font-medium text-gray-500 animate-pulse">Generating Visuals...</span>
+                <LoadingMessage />
              </div>
           </div>
         ) : post?.imageUrls && post.imageUrls.length > 0 ? (

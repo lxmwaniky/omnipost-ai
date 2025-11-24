@@ -166,6 +166,26 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
     }
   }, [idea]);
 
+    const [isHelpOpen, setIsHelpOpen] = useState(false);
+    const [helpInput, setHelpInput] = useState('');
+
+    const handleHelpSubmit = async () => {
+        if (!helpInput.trim()) return;
+        setIsImproving(true);
+        // setIsHelpOpen(false); // Keep open to show progress
+        try {
+            // We use the same service but contextually it's "drafting" now
+            const improved = await improvePrompt(helpInput, null); 
+            setIdea(improved);
+            setHelpInput('');
+            setIsHelpOpen(false); // Close on success
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setIsImproving(false);
+        }
+    };
+
   return (
     <div className="w-full mx-auto relative z-20">
       {/* Search Bar Container */}
@@ -192,21 +212,20 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
                 style={{ scrollbarWidth: 'none' }}
             />
 
+             {/* Help Me Write Badge (Only if empty) */}
+             {hasKey && !idea && !sourceImage && (
+                 <button
+                     onClick={() => setIsHelpOpen(true)}
+                     className="absolute bottom-3 left-4 flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all border backdrop-blur-md z-20 bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20 animate-fade-in-up"
+                 >
+                     <Sparkles size={12} />
+                     Help me write
+                 </button>
+             )}
+
             {/* Right Actions (Absolute positioned) */}
             <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
                 
-                {/* Enhance Button (Now using Wand2) */}
-                {hasKey && (
-                    <button 
-                        onClick={handleImprovePrompt}
-                        disabled={isImproving || (!idea && !sourceImage)}
-                        className="p-3 text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-xl transition-all relative group/tooltip border border-emerald-500/20"
-                        title="Enhance Prompt with AI"
-                    >
-                        {isImproving ? <div className="w-5 h-5 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" /> : <Wand2 size={20} />}
-                    </button>
-                )}
-
                 {/* Image Upload */}
                 <div className="relative">
                     <button 
@@ -250,6 +269,64 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
              </div>
          )}
       </div>
+
+      {/* Help Me Write Modal/Popover */}
+      {isHelpOpen && (
+          <div className="absolute top-0 left-0 w-full h-full bg-zinc-900/95 backdrop-blur-xl rounded-3xl z-30 flex flex-col items-center justify-center p-6 animate-fade-in border border-emerald-500/20">
+              <div className="w-full max-w-md space-y-4">
+                  <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                          <Sparkles size={18} className="text-emerald-400" />
+                          Help me write
+                      </h3>
+                      <button onClick={() => setIsHelpOpen(false)} disabled={isImproving} className="text-gray-500 hover:text-white disabled:opacity-50">
+                          <X size={18} />
+                      </button>
+                  </div>
+                  
+                  {isImproving ? (
+                      <div className="h-32 flex flex-col items-center justify-center gap-3 text-center animate-fade-in">
+                          <div className="w-8 h-8 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
+                          <p className="text-sm text-emerald-400 font-medium animate-pulse">Drafting your masterpiece...</p>
+                      </div>
+                  ) : (
+                      <>
+                        <p className="text-sm text-gray-400">Briefly describe what you want to post about, and I'll draft a detailed prompt for you.</p>
+                        <textarea 
+                            autoFocus
+                            value={helpInput}
+                            onChange={(e) => setHelpInput(e.target.value)}
+                            placeholder="e.g. A coffee shop announcing a halloween special..."
+                            className="w-full bg-black/50 border border-white/10 rounded-xl p-4 text-white placeholder:text-gray-600 focus:border-emerald-500/50 focus:ring-0 resize-none h-32"
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                    e.preventDefault();
+                                    handleHelpSubmit();
+                                }
+                            }}
+                        />
+                      </>
+                  )}
+
+                  <div className="flex justify-end gap-2">
+                      <button 
+                          onClick={() => setIsHelpOpen(false)}
+                          disabled={isImproving}
+                          className="px-4 py-2 text-sm text-gray-400 hover:text-white disabled:opacity-50"
+                      >
+                          Cancel
+                      </button>
+                      <button 
+                          onClick={handleHelpSubmit}
+                          disabled={!helpInput.trim() || isImproving}
+                          className="px-6 py-2 bg-emerald-500 text-black font-bold rounded-lg hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                      >
+                          {isImproving ? 'Drafting...' : 'Draft'} <Wand2 size={14} />
+                      </button>
+                  </div>
+              </div>
+          </div>
+      )}
 
       {/* Settings / Options Bar */}
       <div className="mt-6 flex flex-col md:flex-row items-center justify-center gap-6 animate-fade-in">
@@ -353,28 +430,7 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
 
          {/* Right Controls Group */}
          <div className="flex flex-wrap justify-center items-center gap-4 w-full md:w-auto">
-             {/* Image Count Selector */}
-             <div className="flex flex-col items-center gap-2">
-                <span className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Images</span>
-                <div className="flex items-center bg-zinc-900/50 border border-white/5 rounded-full p-1">
-                    {[1, 2, 3, 4].map((num) => (
-                        <button
-                            key={num}
-                            onClick={() => setImageCount(num)}
-                            className={`w-8 h-8 rounded-full text-xs font-medium transition-all ${
-                                imageCount === num 
-                                ? 'bg-white text-black shadow-lg' 
-                                : 'text-gray-500 hover:text-white hover:bg-white/5'
-                            }`}
-                        >
-                            {num}
-                        </button>
-                    ))}
-                </div>
-             </div>
-
-             <div className="hidden md:block w-px h-8 bg-white/10" />
-
+             
              {/* Video Toggle */}
              <div className="flex flex-col items-center gap-2">
                 <span className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Video</span>
