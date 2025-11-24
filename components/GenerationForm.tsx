@@ -194,7 +194,7 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
         ${isGenerating ? 'opacity-50 pointer-events-none' : ''}
       `}>
          {/* The Bar */}
-         <div className="relative flex items-center w-full bg-zinc-900/90 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl shadow-black/50 hover:border-emerald-500/30 hover:shadow-emerald-500/10 transition-all overflow-hidden">
+         <div className="relative flex items-center w-full bg-zinc-900/90 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl shadow-black/50 transition-all overflow-hidden focus-within:border-white/20 focus-within:ring-1 focus-within:ring-white/10">
             
             {/* Main Input */}
             <textarea
@@ -208,7 +208,7 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
                     }
                 }}
                 placeholder={sourceImage ? "Describe how to change this image..." : placeholder}
-                className="w-full bg-transparent border-none text-lg text-white placeholder:text-gray-500 focus:ring-0 py-6 pl-8 pr-48 resize-none min-h-[80px] max-h-[200px] leading-relaxed transition-all"
+                className="w-full bg-transparent border-none text-xl font-medium text-white placeholder:text-gray-500 focus:ring-0 py-8 pl-10 pr-48 resize-none min-h-[120px] max-h-[300px] leading-relaxed transition-all relative z-10"
                 style={{ scrollbarWidth: 'none' }}
             />
 
