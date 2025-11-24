@@ -224,7 +224,7 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
              )}
 
             {/* Right Actions (Absolute positioned) */}
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2 z-20">
                 
                 {/* Image Upload */}
                 <div className="relative">
