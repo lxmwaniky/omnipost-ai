@@ -448,37 +448,7 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
                 </button>
              </div>
 
-             {/* Custom Aspect Ratio Dropdown */}
-             <div className="flex flex-col items-center gap-2 relative" ref={ratioRef}>
-                <span className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Ratio</span>
-                <button 
-                    onClick={() => setIsRatioOpen(!isRatioOpen)}
-                    className="flex items-center gap-2 bg-zinc-900/50 border border-white/5 text-gray-300 text-xs rounded-full px-4 py-2 outline-none hover:bg-white/5 hover:border-white/10 transition-all min-w-[100px] justify-between"
-                >
-                    <span>{aspectRatio}</span>
-                    <ChevronDown size={12} className={`transition-transform ${isRatioOpen ? 'rotate-180' : ''}`} />
-                </button>
 
-                {isRatioOpen && (
-                    <div className="absolute bottom-full left-0 mb-2 w-40 bg-zinc-900 border border-white/10 rounded-xl shadow-xl overflow-hidden z-50 animate-fade-in-up">
-                        {Object.values(AspectRatio).map((ratio) => (
-                            <button
-                                key={ratio}
-                                onClick={() => {
-                                    setAspectRatio(ratio);
-                                    setIsRatioOpen(false);
-                                }}
-                                className={`w-full text-left px-4 py-2.5 text-xs hover:bg-white/5 transition-colors flex items-center justify-between ${
-                                    aspectRatio === ratio ? 'text-emerald-400 bg-emerald-500/5' : 'text-gray-400'
-                                }`}
-                            >
-                                {ratio}
-                                {aspectRatio === ratio && <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />}
-                            </button>
-                        ))}
-                    </div>
-                )}
-             </div>
          </div>
       </div>
     </div>

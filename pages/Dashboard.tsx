@@ -108,45 +108,30 @@ const Dashboard: React.FC = () => {
     setResults(null);
 
     try {
-      // 1. Generate Text Content First
-      const textContent = await generateSocialText(idea || "Create a caption for this image", tone);
+      // 1. Generate Text Content First (Only for selected platforms)
+      const textContent = await generateSocialText(idea || "Create a caption for this image", tone, selectedPlatforms);
       
       // Determine aspect ratios
       const getRatio = (defaultRatio: string) => aspectRatio === AspectRatio.AUTO ? defaultRatio : aspectRatio;
 
-      // Prepare placeholder results
-      const initialResults: GeneratedContent = {
-        linkedin: { 
-          ...textContent.linkedin, 
-          platform: Platform.LINKEDIN, 
-          aspectRatio: getRatio('4:5'),
-          imageUrls: []
-        },
-        twitter: { 
-          ...textContent.twitter, 
-          platform: Platform.TWITTER, 
-          aspectRatio: getRatio('16:9'),
-          imageUrls: []
-        },
-        instagram: { 
-          ...textContent.instagram, 
-          platform: Platform.INSTAGRAM, 
-          aspectRatio: getRatio('1:1'),
-          imageUrls: []
-        },
-        facebook: { 
-          ...textContent.facebook, 
-          platform: Platform.FACEBOOK, 
-          aspectRatio: getRatio('1:1'),
-          imageUrls: []
-        },
-        pinterest: { 
-          ...textContent.pinterest, 
-          platform: Platform.PINTEREST, 
-          aspectRatio: getRatio('2:3'),
-          imageUrls: []
-        }
-      };
+      // Prepare placeholder results (only for returned platforms)
+      const initialResults: GeneratedContent = {};
+      
+      if (textContent.linkedin) {
+          initialResults.linkedin = { ...textContent.linkedin, platform: Platform.LINKEDIN, aspectRatio: getRatio('4:5'), imageUrls: [] };
+      }
+      if (textContent.twitter) {
+          initialResults.twitter = { ...textContent.twitter, platform: Platform.TWITTER, aspectRatio: getRatio('16:9'), imageUrls: [] };
+      }
+      if (textContent.instagram) {
+          initialResults.instagram = { ...textContent.instagram, platform: Platform.INSTAGRAM, aspectRatio: getRatio('1:1'), imageUrls: [] };
+      }
+      if (textContent.facebook) {
+          initialResults.facebook = { ...textContent.facebook, platform: Platform.FACEBOOK, aspectRatio: getRatio('1:1'), imageUrls: [] };
+      }
+      if (textContent.pinterest) {
+          initialResults.pinterest = { ...textContent.pinterest, platform: Platform.PINTEREST, aspectRatio: getRatio('2:3'), imageUrls: [] };
+      }
       
       setResults(initialResults);
 
@@ -176,11 +161,13 @@ const Dashboard: React.FC = () => {
       const generateVideoSafe = async () => {
           if (!includeVideo) return;
           try {
-              // Always use Creative Mode: Use the generated image prompt from Instagram (usually most visual)
-              const videoPrompt = `Create a cinematic video based on this visual description: ${textContent.instagram.imagePrompt}. Scenes should include dynamic camera movements and professional lighting.`;
+              // Always use Creative Mode: Use the generated image prompt from any available platform
+              const availablePlatform = Object.values(textContent)[0];
+              const basePrompt = availablePlatform?.imagePrompt || idea;
+              const videoPrompt = `Create a cinematic video based on this visual description: ${basePrompt}. Scenes should include dynamic camera movements and professional lighting.`;
               
-              // Use the Instagram caption as the video caption (it's usually the most visual/engaging)
-              const videoCaption = textContent.instagram.content;
+              // Use the caption from available platform
+              const videoCaption = availablePlatform?.content || "Check this out!";
 
               const videoUrl = await generateVideo(videoPrompt);
               setResults(prev => prev ? { 

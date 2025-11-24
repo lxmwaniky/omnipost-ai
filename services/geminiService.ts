@@ -48,28 +48,51 @@ export const improvePrompt = async (idea: string, imageBase64: string | null): P
 
 export const generateSocialText = async (
   idea: string,
-  tone: string
-): Promise<Omit<GeneratedContent, 'linkedin' | 'twitter' | 'instagram' | 'facebook' | 'pinterest' | 'video'> & { 
-  linkedin: Omit<SocialPost, 'imageUrls'>, 
-  twitter: Omit<SocialPost, 'imageUrls'>, 
-  instagram: Omit<SocialPost, 'imageUrls'>,
-  facebook: Omit<SocialPost, 'imageUrls'>,
-  pinterest: Omit<SocialPost, 'imageUrls'>
-}> => {
+  tone: string,
+  selectedPlatforms: Record<Platform, boolean>
+): Promise<Partial<GeneratedContent>> => {
   const ai = getAIClient();
   
-  const prompt = `
-    Generate 5 distinct social media posts based on this idea: "${idea}".
+  const activePlatforms = Object.entries(selectedPlatforms)
+    .filter(([_, isSelected]) => isSelected)
+    .map(([platform]) => platform);
+
+  if (activePlatforms.length === 0) return {};
+
+  let prompt = `
+    Generate social media posts based on this idea: "${idea}".
     Tone: ${tone}.
-    
-    1. LinkedIn: Professional, long-form, insightful.
-    2. Twitter/X: Short, punchy, under 280 characters, no hashtags in body (maybe 1 at end).
-    3. Instagram: Visual description implied in caption, engaging, casual, include 10-15 relevant hashtags.
-    4. Facebook: Conversational, community-focused, moderate length, 3-5 hashtags.
-    5. Pinterest: Descriptive, keyword-rich for searchability, inspiring, 5-8 hashtags.
-    
-    Return the response in JSON format.
+    Return the response in JSON format with keys for: ${activePlatforms.join(', ')}.
   `;
+
+  const platformPrompts: Record<string, string> = {
+    linkedin: "1. LinkedIn: Professional, long-form, insightful.",
+    twitter: "2. Twitter/X: Short, punchy, under 280 characters, no hashtags in body (maybe 1 at end).",
+    instagram: "3. Instagram: Visual description implied in caption, engaging, casual, include 10-15 relevant hashtags.",
+    facebook: "4. Facebook: Conversational, community-focused, moderate length, 3-5 hashtags.",
+    pinterest: "5. Pinterest: Descriptive, keyword-rich for searchability, inspiring, 5-8 hashtags."
+  };
+
+  activePlatforms.forEach(p => {
+      if (platformPrompts[p]) prompt += `\n${platformPrompts[p]}`;
+  });
+
+  // Dynamic Schema Construction
+  const properties: any = {};
+  const required: string[] = [];
+
+  activePlatforms.forEach(p => {
+      properties[p] = {
+        type: Type.OBJECT,
+        properties: {
+          content: { type: Type.STRING },
+          hashtags: { type: Type.ARRAY, items: { type: Type.STRING } },
+          imagePrompt: { type: Type.STRING, description: "A detailed prompt to generate an image for this post." }
+        },
+        required: ["content", "hashtags", "imagePrompt"]
+      };
+      required.push(p);
+  });
 
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
@@ -78,66 +101,22 @@ export const generateSocialText = async (
       responseMimeType: "application/json",
       responseSchema: {
         type: Type.OBJECT,
-        properties: {
-          linkedin: {
-            type: Type.OBJECT,
-            properties: {
-              content: { type: Type.STRING },
-              hashtags: { type: Type.ARRAY, items: { type: Type.STRING } },
-              imagePrompt: { type: Type.STRING, description: "A detailed prompt to generate a photorealistic image for this post." }
-            },
-            required: ["content", "hashtags", "imagePrompt"]
-          },
-          twitter: {
-            type: Type.OBJECT,
-            properties: {
-              content: { type: Type.STRING },
-              hashtags: { type: Type.ARRAY, items: { type: Type.STRING } },
-              imagePrompt: { type: Type.STRING, description: "A detailed prompt to generate a minimalist or punchy image." }
-            },
-            required: ["content", "hashtags", "imagePrompt"]
-          },
-          instagram: {
-            type: Type.OBJECT,
-            properties: {
-              content: { type: Type.STRING },
-              hashtags: { type: Type.ARRAY, items: { type: Type.STRING } },
-              imagePrompt: { type: Type.STRING, description: "A highly aesthetic, instagram-worthy image prompt." }
-            },
-            required: ["content", "hashtags", "imagePrompt"]
-          },
-          facebook: {
-            type: Type.OBJECT,
-            properties: {
-              content: { type: Type.STRING },
-              hashtags: { type: Type.ARRAY, items: { type: Type.STRING } },
-              imagePrompt: { type: Type.STRING, description: "A detailed prompt to generate an engaging, community-focused image." }
-            },
-            required: ["content", "hashtags", "imagePrompt"]
-          },
-          pinterest: {
-            type: Type.OBJECT,
-            properties: {
-              content: { type: Type.STRING },
-              hashtags: { type: Type.ARRAY, items: { type: Type.STRING } },
-              imagePrompt: { type: Type.STRING, description: "A highly visual, inspiring, vertical image prompt." }
-            },
-            required: ["content", "hashtags", "imagePrompt"]
-          }
-        }
+        properties: properties,
+        required: required
       }
     }
   });
 
   const json = JSON.parse(response.text || "{}");
   
-  return {
-    linkedin: { ...json.linkedin, platform: Platform.LINKEDIN, aspectRatio: '4:5' }, // Default optimal
-    twitter: { ...json.twitter, platform: Platform.TWITTER, aspectRatio: '16:9' },
-    instagram: { ...json.instagram, platform: Platform.INSTAGRAM, aspectRatio: '1:1' },
-    facebook: { ...json.facebook, platform: Platform.FACEBOOK, aspectRatio: '1:1' },
-    pinterest: { ...json.pinterest, platform: Platform.PINTEREST, aspectRatio: '2:3' }
-  };
+  const result: any = {};
+  if (json.linkedin) result.linkedin = { ...json.linkedin, platform: Platform.LINKEDIN, aspectRatio: '4:5' };
+  if (json.twitter) result.twitter = { ...json.twitter, platform: Platform.TWITTER, aspectRatio: '16:9' };
+  if (json.instagram) result.instagram = { ...json.instagram, platform: Platform.INSTAGRAM, aspectRatio: '1:1' };
+  if (json.facebook) result.facebook = { ...json.facebook, platform: Platform.FACEBOOK, aspectRatio: '1:1' };
+  if (json.pinterest) result.pinterest = { ...json.pinterest, platform: Platform.PINTEREST, aspectRatio: '2:3' };
+
+  return result;
 };
 
 export const generateImageForPlatform = async (
