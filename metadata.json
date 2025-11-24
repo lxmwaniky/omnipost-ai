@@ -1,0 +1,5 @@
+{
+  "name": "OmniPost AI",
+  "description": "Cross-platform social media content generator powered by Gemini. Create tailored posts and images for LinkedIn, Twitter, and Instagram in seconds.",
+  "requestFramePermissions": []
+}
