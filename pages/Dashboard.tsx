@@ -35,7 +35,6 @@ const Dashboard: React.FC = () => {
   const [results, setResults] = useState<GeneratedContent | null>(null);
   const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
   const [isSignedIn, setIsSignedIn] = useState(false);
-  const [showSavePrompt, setShowSavePrompt] = useState(false);
 
   const handleWaitlistSuccess = () => {
     setIsSignedIn(true);
@@ -216,9 +215,9 @@ const Dashboard: React.FC = () => {
           setIdea('');
           setSourceImage(null);
           // Show save prompt if not signed in
-          if (!isSignedIn) {
-             setTimeout(() => setShowSavePrompt(true), 2000); // Small delay for effect
-          }
+          // if (!isSignedIn) {
+          //    setTimeout(() => setShowSavePrompt(true), 2000); // Small delay for effect
+          // }
       }
     }
   }, [hasKey, idea, tone, imageSize, aspectRatio, sourceImage, includeVideo, imageCount, selectedPlatforms]);
@@ -231,14 +230,7 @@ const Dashboard: React.FC = () => {
       {/* Save Prompt Modal (Reusing WaitlistModal with custom title/message if possible, or just triggering it) */}
       {/* For now, we'll just trigger the same modal but we might want to change the text context. 
           The WaitlistModal is generic enough. We can just open it. */}
-      <WaitlistModal 
-        isOpen={showSavePrompt} 
-        onClose={() => setShowSavePrompt(false)} 
-        onSuccess={() => {
-            handleWaitlistSuccess();
-            setShowSavePrompt(false);
-        }}
-      />
+      {/* Save Prompt Modal Removed */}
 
       {/* Header - Consistent with Landing Page */}
       <nav className="fixed top-0 w-full z-50 bg-black/50 backdrop-blur-md border-b border-white/10">

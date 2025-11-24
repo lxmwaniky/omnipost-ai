@@ -85,7 +85,11 @@ const WaitlistModal: React.FC<WaitlistModalProps> = ({ isOpen, onClose, onSucces
 
       setSuccessMessage("Welcome to the waitlist!");
       setStep('success');
+      
+      // Trigger success callback
       if (onSuccess) onSuccess();
+
+      // Close after delay
       setTimeout(() => {
         onClose();
         // Reset state after closing animation
@@ -95,7 +99,7 @@ const WaitlistModal: React.FC<WaitlistModalProps> = ({ isOpen, onClose, onSucces
           setEmail('');
           setSuccessMessage('');
         }, 300);
-      }, 2500);
+      }, 3000); // Increased delay to ensure message is read
     } catch (err: any) {
       console.error(err);
       setStep('email'); // Go back to email step so they can retry

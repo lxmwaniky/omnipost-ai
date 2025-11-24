@@ -241,7 +241,7 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
 
          {/* Image Preview (if uploaded) */}
          {sourceImage && (
-             <div className="absolute top-full left-0 mt-4 p-2 bg-zinc-900/90 border border-white/10 rounded-2xl backdrop-blur-md animate-fade-in flex items-center gap-4">
+             <div className="mt-4 p-2 bg-zinc-900/90 border border-white/10 rounded-2xl backdrop-blur-md animate-fade-in flex items-center gap-4 relative z-10">
                  <img src={sourceImage} alt="Reference" className="h-16 w-16 object-cover rounded-xl border border-white/10" />
                  <div>
                      <p className="text-sm font-medium text-white">Reference Image Uploaded</p>
