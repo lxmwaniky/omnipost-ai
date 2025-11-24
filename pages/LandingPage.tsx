@@ -62,9 +62,6 @@ const LandingPage: React.FC = () => {
               >
                 Start Generating <ArrowRight size={20} />
               </button>
-              <button className="px-8 py-4 bg-white/5 border border-white/10 rounded-full font-bold text-lg hover:bg-white/10 transition-all flex items-center justify-center gap-2">
-                <PlayCircle size={20} /> Watch Demo
-              </button>
             </div>
           </motion.div>
 
