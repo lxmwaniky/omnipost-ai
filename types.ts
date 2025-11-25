@@ -51,11 +51,11 @@ export interface VideoPost {
 }
 
 export interface GeneratedContent {
-  linkedin: SocialPost;
-  twitter: SocialPost;
-  instagram: SocialPost;
-  facebook: SocialPost;
-  pinterest: SocialPost;
+  linkedin?: SocialPost;
+  twitter?: SocialPost;
+  instagram?: SocialPost;
+  facebook?: SocialPost;
+  pinterest?: SocialPost;
   video?: VideoPost;
 }
 

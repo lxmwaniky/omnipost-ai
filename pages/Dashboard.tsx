@@ -168,7 +168,8 @@ const Dashboard: React.FC = () => {
           if (!includeVideo) return;
           try {
               // Always use Creative Mode: Use the generated image prompt from any available platform
-              const availablePlatform = Object.values(textContent)[0];
+              // We cast to SocialPost because generateSocialText only returns SocialPost objects
+              const availablePlatform = Object.values(textContent)[0] as SocialPost | undefined;
               const basePrompt = availablePlatform?.imagePrompt || idea;
               const videoPrompt = `Create a cinematic video based on this visual description: ${basePrompt}. Scenes should include dynamic camera movements and professional lighting.`;
               
@@ -210,10 +211,6 @@ const Dashboard: React.FC = () => {
       if (!error) {
           setIdea('');
           setSourceImage(null);
-          // Show save prompt if not signed in
-          // if (!isSignedIn) {
-          //    setTimeout(() => setShowSavePrompt(true), 2000); // Small delay for effect
-          // }
       }
     }
   }, [hasKey, idea, tone, imageSize, aspectRatio, sourceImage, includeVideo, imageCount, selectedPlatforms]);
@@ -222,11 +219,6 @@ const Dashboard: React.FC = () => {
     <div className="min-h-screen bg-black text-white font-sans selection:bg-emerald-500 selection:text-white overflow-x-hidden">
       <SocialBackground />
       <WaitlistModal isOpen={isWaitlistOpen} onClose={() => setIsWaitlistOpen(false)} onSuccess={handleWaitlistSuccess} />
-      
-      {/* Save Prompt Modal (Reusing WaitlistModal with custom title/message if possible, or just triggering it) */}
-      {/* For now, we'll just trigger the same modal but we might want to change the text context. 
-          The WaitlistModal is generic enough. We can just open it. */}
-      {/* Save Prompt Modal Removed */}
 
       {/* Header - Consistent with Landing Page */}
       <nav className="fixed top-0 w-full z-50 bg-black/50 backdrop-blur-md border-b border-white/10">

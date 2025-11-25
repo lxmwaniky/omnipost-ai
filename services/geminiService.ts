@@ -108,11 +108,9 @@ export const generateSocialText = async (
   });
 
   if (!response.text) {
-    console.error("API Response missing text:", response);
+    console.error("API Response missing text");
     throw new Error("No content generated from API.");
   }
-
-  console.log("Raw API Response:", response.text);
 
   const json = JSON.parse(response.text);
   
