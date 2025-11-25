@@ -107,14 +107,31 @@ export const generateSocialText = async (
     }
   });
 
-  const json = JSON.parse(response.text || "{}");
+  if (!response.text) {
+    console.error("API Response missing text:", response);
+    throw new Error("No content generated from API.");
+  }
+
+  console.log("Raw API Response:", response.text);
+
+  const json = JSON.parse(response.text);
+  
+  // Normalize keys to lowercase for case-insensitive matching
+  const normalizedJson: any = {};
+  Object.keys(json).forEach(key => {
+      normalizedJson[key.toLowerCase()] = json[key];
+  });
+
+  if (Object.keys(normalizedJson).length === 0) {
+    throw new Error("Received empty response from API.");
+  }
   
   const result: any = {};
-  if (json.linkedin) result.linkedin = { ...json.linkedin, platform: Platform.LINKEDIN, aspectRatio: '4:5' };
-  if (json.twitter) result.twitter = { ...json.twitter, platform: Platform.TWITTER, aspectRatio: '16:9' };
-  if (json.instagram) result.instagram = { ...json.instagram, platform: Platform.INSTAGRAM, aspectRatio: '1:1' };
-  if (json.facebook) result.facebook = { ...json.facebook, platform: Platform.FACEBOOK, aspectRatio: '1:1' };
-  if (json.pinterest) result.pinterest = { ...json.pinterest, platform: Platform.PINTEREST, aspectRatio: '2:3' };
+  if (normalizedJson.linkedin) result.linkedin = { ...normalizedJson.linkedin, platform: Platform.LINKEDIN, aspectRatio: '4:5' };
+  if (normalizedJson.twitter) result.twitter = { ...normalizedJson.twitter, platform: Platform.TWITTER, aspectRatio: '16:9' };
+  if (normalizedJson.instagram) result.instagram = { ...normalizedJson.instagram, platform: Platform.INSTAGRAM, aspectRatio: '1:1' };
+  if (normalizedJson.facebook) result.facebook = { ...normalizedJson.facebook, platform: Platform.FACEBOOK, aspectRatio: '1:1' };
+  if (normalizedJson.pinterest) result.pinterest = { ...normalizedJson.pinterest, platform: Platform.PINTEREST, aspectRatio: '2:3' };
 
   return result;
 };

@@ -216,15 +216,25 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
              {hasKey && !idea && !sourceImage && (
                  <button
                      onClick={() => setIsHelpOpen(true)}
-                     className="absolute bottom-3 left-4 flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all border backdrop-blur-md z-20 bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20 animate-fade-in-up"
+                     className="absolute bottom-3 left-4 flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all border backdrop-blur-md z-20 bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20 animate-fade-in-up md:flex hidden"
                  >
                      <Sparkles size={12} />
                      Help me write
                  </button>
              )}
 
+             {/* Mobile Help Badge (Top Right) */}
+             {hasKey && !idea && !sourceImage && (
+                 <button
+                     onClick={() => setIsHelpOpen(true)}
+                     className="absolute top-3 right-3 flex md:hidden items-center justify-center w-8 h-8 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 z-20"
+                 >
+                     <Sparkles size={14} />
+                 </button>
+             )}
+
             {/* Right Actions (Absolute positioned) */}
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2 z-20">
+            <div className="absolute right-3 bottom-3 md:top-1/2 md:-translate-y-1/2 flex items-center gap-2 z-20">
                 
                 {/* Image Upload */}
                 <div className="relative">

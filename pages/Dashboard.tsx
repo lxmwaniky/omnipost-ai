@@ -31,6 +31,7 @@ const Dashboard: React.FC = () => {
   const [isVideoGenerating, setIsVideoGenerating] = useState(false);
   const [hasKey, setHasKey] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [warning, setWarning] = useState<string | null>(null);
 
   const [results, setResults] = useState<GeneratedContent | null>(null);
   const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
@@ -111,6 +112,11 @@ const Dashboard: React.FC = () => {
       // 1. Generate Text Content First (Only for selected platforms)
       const textContent = await generateSocialText(idea || "Create a caption for this image", tone, selectedPlatforms);
       
+      const hasTextPlatforms = Object.values(selectedPlatforms).some(Boolean);
+      if (hasTextPlatforms && Object.keys(textContent).length === 0) {
+          throw new Error("We couldn't generate posts for your selected platforms. Please try a different idea or try again.");
+      }
+      
       // Determine aspect ratios
       const getRatio = (defaultRatio: string) => aspectRatio === AspectRatio.AUTO ? defaultRatio : aspectRatio;
 
@@ -138,8 +144,8 @@ const Dashboard: React.FC = () => {
       // 2. Generate Images and Video in Parallel
       
       // Helper for images
-      const generateImageSafe = async (platformKey: keyof GeneratedContent, post: SocialPost, platform: Platform) => {
-        if (!selectedPlatforms[platform]) return; // Skip if not selected
+      const generateImageSafe = async (platformKey: keyof GeneratedContent, post: SocialPost | undefined, platform: Platform) => {
+        if (!selectedPlatforms[platform] || !post) return; // Skip if not selected or post is missing
 
         try {
             const promptToUse = post.imagePrompt || `${idea}. ${tone} style.`;
@@ -174,8 +180,11 @@ const Dashboard: React.FC = () => {
                   ...prev, 
                   video: { url: videoUrl, prompt: videoPrompt, content: videoCaption } 
               } : null);
-          } catch (e) {
+          } catch (e: any) {
               console.error("Failed to generate video", e);
+              if (e.message?.includes('429') || e.message?.includes('quota')) {
+                  setWarning("Video generation limit reached. Try again in a minute! ⏳");
+              }
           } finally {
               setIsVideoGenerating(false);
           }
@@ -307,6 +316,13 @@ const Dashboard: React.FC = () => {
                     <div className="max-w-2xl mx-auto bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-center gap-3 text-red-200">
                         <AlertCircle size={20} />
                         {error}
+                    </div>
+                )}
+
+                {warning && (
+                    <div className="max-w-2xl mx-auto bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 flex items-center gap-3 text-amber-200 animate-fade-in">
+                        <AlertCircle size={20} />
+                        {warning}
                     </div>
                 )}
 
