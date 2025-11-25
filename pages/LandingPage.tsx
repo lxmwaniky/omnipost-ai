@@ -159,35 +159,113 @@ const LandingPage: React.FC = () => {
          </div>
       </section>
 
-      {/* Section 3: How it Works */}
+      {/* Section 3: Features (Bento Grid) */}
       <section className="py-32 relative z-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-20">
-            <h2 className="text-3xl lg:text-5xl font-bold mb-6">The Ultimate Media Engine</h2>
+            <h2 className="text-3xl lg:text-5xl font-bold mb-6">Everything you need to <span className="text-emerald-400">go viral.</span></h2>
             <p className="text-gray-400 max-w-2xl mx-auto text-lg">
-              From script to screen in three simple steps.
+              No technical skills required. Just your ideas, amplified.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <FeatureCard 
-              icon={<Video className="text-emerald-400" size={32} />}
-              title="1. Describe It"
-              description="Enter a simple text prompt or upload a reference image. Our AI understands context and nuance."
-              delay={0}
-            />
-            <FeatureCard 
-              icon={<ImageIcon className="text-teal-400" size={32} />}
-              title="2. Generate It"
-              description="Watch as high-fidelity images and videos are generated in parallel for all platforms."
-              delay={0.2}
-            />
-            <FeatureCard 
-              icon={<Zap className="text-cyan-400" size={32} />}
-              title="3. Post It"
-              description="Download platform-ready assets or schedule them directly. Viral ready, instantly."
-              delay={0.4}
-            />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[300px]">
+            
+            {/* Feature 1: Prompt Tuning (Large) */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="md:col-span-2 bg-zinc-900/50 border border-white/10 rounded-3xl p-6 md:p-8 relative overflow-hidden group hover:border-emerald-500/30 transition-colors"
+            >
+              <div className="relative z-10 h-full flex flex-col justify-between">
+                <div>
+                  <div className="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center text-emerald-400 mb-4">
+                    <Zap size={24} />
+                  </div>
+                  <h3 className="text-2xl font-bold mb-2">Help Me Write</h3>
+                  <p className="text-gray-400 max-w-md">
+                    Don't know what to write? Just type a messy thought. We'll turn it into a professional, witty, or urgent caption instantly.
+                  </p>
+                </div>
+                
+                {/* Visual Representation */}
+                <div className="bg-black/50 rounded-xl p-4 border border-white/5 backdrop-blur-sm mt-6 transform group-hover:translate-y-[-5px] transition-transform">
+                   <div className="flex items-center gap-3 text-sm text-gray-500 mb-2">
+                      <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                      <span className="line-through">"buy my product pls"</span>
+                   </div>
+                   <div className="flex items-center gap-3 text-sm text-emerald-400 font-medium">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                      <span>"Unlock your potential with our premium solution. 🚀"</span>
+                   </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Feature 2: Image Gen (Tall) */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="md:row-span-2 bg-zinc-900/50 border border-white/10 rounded-3xl p-6 md:p-8 relative overflow-hidden group hover:border-purple-500/30 transition-colors"
+            >
+               <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/80 z-0" />
+               <img 
+                 src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop" 
+                 alt="AI Art" 
+                 className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:scale-110 transition-transform duration-700"
+               />
+               
+               <div className="relative z-10 h-full flex flex-col justify-end">
+                  <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center text-purple-400 mb-4 backdrop-blur-md">
+                    <ImageIcon size={24} />
+                  </div>
+                  <h3 className="text-2xl font-bold mb-2">Instant Studio</h3>
+                  <p className="text-gray-300">
+                    Need a photo? Don't search for stock. Generate unique, high-quality images that match your brand perfectly.
+                  </p>
+               </div>
+            </motion.div>
+
+            {/* Feature 3: Video Gen (Square) */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="bg-zinc-900/50 border border-white/10 rounded-3xl p-6 md:p-8 relative overflow-hidden group hover:border-red-500/30 transition-colors"
+            >
+               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <PlayCircle size={40} className="text-red-500" />
+               </div>
+               <div className="absolute bottom-8 left-8">
+                  <h3 className="text-xl font-bold mb-1">Cinematic Video</h3>
+                  <p className="text-sm text-gray-400">Text-to-Video in seconds.</p>
+               </div>
+            </motion.div>
+
+            {/* Feature 4: Multi-Platform (Square) */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              className="bg-zinc-900/50 border border-white/10 rounded-3xl p-6 md:p-8 relative overflow-hidden group hover:border-blue-500/30 transition-colors"
+            >
+               <div className="grid grid-cols-2 gap-4 mb-8 opacity-50 group-hover:opacity-100 transition-opacity">
+                  <div className="bg-[#0077b5]/20 p-3 rounded-lg flex justify-center"><Linkedin className="text-[#0077b5]" /></div>
+                  <div className="bg-white/10 p-3 rounded-lg flex justify-center"><span className="font-bold">X</span></div>
+                  <div className="bg-pink-500/20 p-3 rounded-lg flex justify-center"><Instagram className="text-pink-500" /></div>
+                  <div className="bg-blue-600/20 p-3 rounded-lg flex justify-center"><Facebook className="text-blue-600" /></div>
+               </div>
+               <div>
+                  <h3 className="text-xl font-bold mb-1">Platform Native</h3>
+                  <p className="text-sm text-gray-400">We speak every social language.</p>
+               </div>
+            </motion.div>
+
           </div>
         </div>
       </section>
