@@ -221,21 +221,21 @@ const Dashboard: React.FC = () => {
       <WaitlistModal isOpen={isWaitlistOpen} onClose={() => setIsWaitlistOpen(false)} onSuccess={handleWaitlistSuccess} />
 
       {/* Header - Consistent with Landing Page */}
-      <nav className="fixed top-0 w-full z-50 bg-black/50 backdrop-blur-md border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Logo className="w-10 h-10 text-emerald-500" />
-            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+      <nav className="fixed top-0 w-full z-50 bg-black/95 backdrop-blur-lg border-b border-white/10 px-3 xs:px-4 sm:px-5 md:px-6">
+        <div className="max-w-7xl mx-auto h-14 xs:h-16 sm:h-18 md:h-20 flex items-center justify-between">
+          <div className="flex items-center gap-1.5 xs:gap-2 sm:gap-2.5 md:gap-3">
+            <Logo className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 text-emerald-500" />
+            <span className="text-sm xs:text-base sm:text-lg md:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400 whitespace-nowrap tracking-tight">
               OmniPost AI
             </span>
           </div>
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
              {/* Hidden API Key Trigger (for power users who know) */}
              {!hasKey && (
                <button 
                  onClick={handleSelectKey}
-                 className="text-xs text-gray-600 hover:text-gray-400 transition-colors"
+                 className="text-[10px] xs:text-xs text-gray-600 hover:text-gray-400 transition-colors"
                >
                  (Set Key)
                </button>
@@ -243,15 +243,15 @@ const Dashboard: React.FC = () => {
 
              <button 
                onClick={() => setIsWaitlistOpen(true)}
-               className="group relative px-6 py-2 rounded-xl bg-black overflow-hidden transition-all hover:scale-105 active:scale-95"
+               className="group relative px-3 py-1.5 xs:px-4 xs:py-2 sm:px-5 sm:py-2 md:px-6 md:py-2.5 rounded-xl bg-black overflow-hidden transition-all hover:scale-105 active:scale-95 min-w-[80px] xs:min-w-[90px] sm:min-w-[100px] min-h-[32px] xs:min-h-[36px]"
              >
                <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 opacity-20 group-hover:opacity-40 transition-opacity" />
                <div className="absolute inset-[1px] bg-black rounded-xl z-10" />
-               <div className="relative z-20 flex items-center gap-2">
-                 <span className="text-sm font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-400 group-hover:from-emerald-300 group-hover:to-teal-300">
+               <div className="relative z-20 flex items-center justify-center gap-1 xs:gap-1.5 sm:gap-2">
+                 <span className="text-xs xs:text-sm font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-400 group-hover:from-emerald-300 group-hover:to-teal-300 truncate">
                    Sign In
                  </span>
-                 <LogIn size={16} className="text-teal-500 group-hover:text-teal-300 transition-colors" />
+                 <LogIn size={12} className="xs:w-3 xs:h-3 sm:w-4 sm:h-4 text-teal-500 group-hover:text-teal-300 transition-colors flex-shrink-0" />
                </div>
              </button>
           </div>
@@ -259,16 +259,16 @@ const Dashboard: React.FC = () => {
       </nav>
 
       {/* Main Content Area */}
-      <main className="pt-32 pb-20 px-4 sm:px-6 relative z-10 min-h-screen flex flex-col items-center">
+      <main className="pt-20 sm:pt-24 md:pt-28 pb-12 sm:pb-16 md:pb-20 px-3 xs:px-4 sm:px-5 md:px-6 relative z-10 min-h-screen flex flex-col items-center">
          
          {/* Hero / Search Section */}
-         <div className="w-full max-w-4xl mx-auto mb-12 space-y-8 text-center">
+         <div className="w-full max-w-4xl mx-auto mb-8 sm:mb-10 md:mb-12 space-y-6 sm:space-y-8 text-center">
             {!results && !isGenerating && (
-                <div className="space-y-4 animate-fade-in">
-                    <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
+                <div className="space-y-3 sm:space-y-4 animate-fade-in">
+                    <h1 className="text-2xl xs:text-2.5xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight">
                         What do you want to <span className="text-emerald-400">create</span> today?
                     </h1>
-                    <p className="text-gray-400 text-lg">
+                    <p className="text-gray-400 text-sm xs:text-base sm:text-lg md:text-xl">
                         Generate posts, images, and videos for all your social channels in seconds.
                     </p>
                 </div>
@@ -301,25 +301,25 @@ const Dashboard: React.FC = () => {
 
          {/* Results Section */}
          {(results || isGenerating || error) && (
-             <div className="w-full max-w-7xl mx-auto space-y-8 animate-fade-in-up">
+             <div className="w-full max-w-7xl mx-auto space-y-6 sm:space-y-8 animate-fade-in-up">
                 
                 {/* Error Banner */}
                 {error && (
-                    <div className="max-w-2xl mx-auto bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-center gap-3 text-red-200">
-                        <AlertCircle size={20} />
-                        {error}
+                    <div className="max-w-2xl mx-auto bg-red-500/10 border border-red-500/20 rounded-lg sm:rounded-xl p-3 sm:p-4 flex items-start sm:items-center gap-2 sm:gap-3 text-red-200 text-xs sm:text-sm">
+                        <AlertCircle size={16} className="sm:w-5 sm:h-5 flex-shrink-0 mt-0.5 sm:mt-0" />
+                        <span className="flex-1">{error}</span>
                     </div>
                 )}
 
                 {warning && (
-                    <div className="max-w-2xl mx-auto bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 flex items-center gap-3 text-amber-200 animate-fade-in">
-                        <AlertCircle size={20} />
-                        {warning}
+                    <div className="max-w-2xl mx-auto bg-amber-500/10 border border-amber-500/20 rounded-lg sm:rounded-xl p-3 sm:p-4 flex items-start sm:items-center gap-2 sm:gap-3 text-amber-200 text-xs sm:text-sm animate-fade-in">
+                        <AlertCircle size={16} className="sm:w-5 sm:h-5 flex-shrink-0 mt-0.5 sm:mt-0" />
+                        <span className="flex-1">{warning}</span>
                     </div>
                 )}
 
                 {/* Results Grid */}
-                <div className={`grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6`}>
+                <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6`}>
                     {selectedPlatforms[Platform.LINKEDIN] && (
                         <PlatformCard 
                             platform={Platform.LINKEDIN} 
@@ -380,7 +380,5 @@ const Dashboard: React.FC = () => {
     </div>
   );
 };
-
-
 
 export default Dashboard;
