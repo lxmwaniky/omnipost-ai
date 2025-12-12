@@ -75,7 +75,6 @@ const MagicInputDemo = () => {
                   <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gray-600" />
                   <span className="text-xs font-bold truncate">OmniCoffee</span>
                   <span className="text-[10px] sm:text-xs text-gray-500 truncate hidden xs:block">@omnicoffee</span>
-                  <span className="text-[10px] sm:text-xs text-gray-500 truncate xs:hidden">@omnicoffee</span>
                </div>
                <p className="text-[11px] sm:text-xs text-gray-300 leading-relaxed">
                   Introducing the future of caffeine. ☕️✨ AI-optimized beans for maximum flow state. #FutureCoffee #AI
