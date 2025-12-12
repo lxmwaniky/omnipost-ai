@@ -251,7 +251,7 @@ const Dashboard: React.FC = () => {
                  <span className="text-xs xs:text-sm font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-400 group-hover:from-emerald-300 group-hover:to-teal-300 truncate">
                    Sign In
                  </span>
-                 <LogIn size={12} className="xs:w-3 xs:h-3 sm:w-4 sm:h-4 text-teal-500 group-hover:text-teal-300 transition-colors flex-shrink-0" />
+                 <LogIn className="xs:w-3 xs:h-3 sm:w-4 sm:h-4 text-teal-500 group-hover:text-teal-300 transition-colors flex-shrink-0" />
                </div>
              </button>
           </div>
