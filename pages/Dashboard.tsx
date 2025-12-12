@@ -235,7 +235,7 @@ const Dashboard: React.FC = () => {
              {!hasKey && (
                <button 
                  onClick={handleSelectKey}
-                 className="text-[10px] xs:text-xs text-gray-600 hover:text-gray-400 transition-colors"
+                 className="text-xs text-gray-600 hover:text-gray-400 transition-colors"
                >
                  (Set Key)
                </button>
