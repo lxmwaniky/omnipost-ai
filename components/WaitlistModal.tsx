@@ -193,7 +193,7 @@ const WaitlistModal: React.FC<WaitlistModalProps> = ({ isOpen, onClose, onSucces
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    onKeyPress={handleKeyPress}
+                    onKeyDown={handleKeyPress}
                     placeholder="name@example.com"
                     className="w-full bg-transparent border-b-2 border-white/20 py-2.5 sm:py-3 text-lg sm:text-xl text-white placeholder-gray-500 focus:border-indigo-400 focus:outline-none transition-colors pr-10"
                   />
