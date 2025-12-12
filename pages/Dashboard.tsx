@@ -265,7 +265,7 @@ const Dashboard: React.FC = () => {
          <div className="w-full max-w-4xl mx-auto mb-8 sm:mb-10 md:mb-12 space-y-6 sm:space-y-8 text-center">
             {!results && !isGenerating && (
                 <div className="space-y-3 sm:space-y-4 animate-fade-in">
-                    <h1 className="text-2xl xs:text-2.5xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight">
+                    <h1 className="text-2xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight">
                         What do you want to <span className="text-emerald-400">create</span> today?
                     </h1>
                     <p className="text-gray-400 text-sm xs:text-base sm:text-lg md:text-xl">
