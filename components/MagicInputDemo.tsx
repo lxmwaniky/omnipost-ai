@@ -26,7 +26,7 @@ const MagicInputDemo = () => {
     <div className="w-full max-w-md sm:max-w-lg mx-auto bg-black/40 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg sm:shadow-2xl relative overflow-hidden">
       {/* Input Area */}
       <div className="flex items-center gap-2 sm:gap-3 bg-white/5 rounded-lg sm:rounded-xl p-3 sm:p-4 mb-4 sm:mb-6 border border-white/10">
-        <Sparkles className="text-emerald-400" size={16} className="sm:w-5 sm:h-5" />
+        <Sparkles className="text-emerald-400 sm:w-5 sm:h-5" size={16} />
         <div className="flex-1 font-mono text-xs sm:text-sm text-gray-300 min-h-[18px] sm:min-h-[20px] overflow-hidden">
           {text}<span className="animate-pulse">|</span>
         </div>
