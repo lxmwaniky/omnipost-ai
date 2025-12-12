@@ -218,7 +218,6 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
                  >
                      <Sparkles size={10} className="sm:w-3 sm:h-3" />
                      <span className="hidden sm:inline">Help me write</span>
-                     <span className="inline sm:hidden">Help</span>
                  </button>
              )}
 
