@@ -30,7 +30,7 @@ const MagicInputDemo = () => {
         <div className="flex-1 font-mono text-xs sm:text-sm text-gray-300 min-h-[18px] sm:min-h-[20px] overflow-hidden">
           {text}<span className="animate-pulse">|</span>
         </div>
-        <button className={`p-1.5 sm:p-2 rounded-lg sm:rounded-lg transition-colors ${showResults ? 'bg-emerald-500 text-white' : 'bg-white/10 text-gray-500'}`}>
+        <button className={`p-1.5 sm:p-2 rounded-lg transition-colors ${showResults ? 'bg-emerald-500 text-white' : 'bg-white/10 text-gray-500'}`}>
           <Send size={14} className="sm:w-4 sm:h-4" />
         </button>
       </div>
