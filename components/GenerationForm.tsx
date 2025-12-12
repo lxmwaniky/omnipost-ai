@@ -160,9 +160,9 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
   // Auto-resize textarea
   useEffect(() => {
     if (textareaRef.current) {
-      textareaRef.current.style.height = '80px'; // Reset to min-height
+      textareaRef.current.style.height = '60px'; // Reset to min-height
       const scrollHeight = textareaRef.current.scrollHeight;
-      textareaRef.current.style.height = Math.min(Math.max(scrollHeight, 80), 200) + 'px';
+      textareaRef.current.style.height = Math.min(Math.max(scrollHeight, 60), 150) + 'px';
     }
   }, [idea]);
 
@@ -172,13 +172,11 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
     const handleHelpSubmit = async () => {
         if (!helpInput.trim()) return;
         setIsImproving(true);
-        // setIsHelpOpen(false); // Keep open to show progress
         try {
-            // We use the same service but contextually it's "drafting" now
             const improved = await improvePrompt(helpInput, null); 
             setIdea(improved);
             setHelpInput('');
-            setIsHelpOpen(false); // Close on success
+            setIsHelpOpen(false);
         } catch (e) {
             console.error(e);
         } finally {
@@ -194,7 +192,7 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
         ${isGenerating ? 'opacity-50 pointer-events-none' : ''}
       `}>
          {/* The Bar */}
-         <div className="relative flex items-center w-full bg-zinc-900/90 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl shadow-black/50 transition-all overflow-hidden focus-within:border-white/20 focus-within:ring-1 focus-within:ring-white/10">
+         <div className="relative flex items-center w-full bg-zinc-900/90 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl lg:rounded-3xl shadow-lg sm:shadow-2xl shadow-black/50 transition-all overflow-hidden focus-within:border-white/20 focus-within:ring-1 focus-within:ring-white/10">
             
             {/* Main Input */}
             <textarea
@@ -208,7 +206,7 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
                     }
                 }}
                 placeholder={sourceImage ? "Describe how to change this image..." : placeholder}
-                className="w-full bg-transparent border-none text-xl font-medium text-white placeholder:text-gray-500 focus:ring-0 py-8 pl-10 pr-48 resize-none min-h-[120px] max-h-[300px] leading-relaxed transition-all relative z-10"
+                className="w-full bg-transparent border-none text-base sm:text-lg md:text-xl font-medium text-white placeholder:text-gray-500 focus:ring-0 py-4 sm:py-6 lg:py-8 pl-4 sm:pl-6 lg:pl-10 pr-10 sm:pr-32 lg:pr-48 resize-none min-h-[60px] sm:min-h-[80px] lg:min-h-[120px] max-h-[200px] sm:max-h-[250px] lg:max-h-[300px] leading-relaxed transition-all relative z-10 text-sm sm:text-base"
                 style={{ scrollbarWidth: 'none' }}
             />
 
@@ -216,10 +214,10 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
              {hasKey && !idea && !sourceImage && (
                  <button
                      onClick={() => setIsHelpOpen(true)}
-                     className="absolute bottom-3 left-4 flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all border backdrop-blur-md z-20 bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20 animate-fade-in-up md:flex hidden"
+                     className="absolute bottom-2 left-3 sm:bottom-3 sm:left-4 flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-medium transition-all border backdrop-blur-md z-20 bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20 animate-fade-in-up lg:flex hidden"
                  >
-                     <Sparkles size={12} />
-                     Help me write
+                     <Sparkles size={10} className="sm:w-3 sm:h-3" />
+                     <span className="hidden sm:inline">Help me write</span>
                  </button>
              )}
 
@@ -227,23 +225,23 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
              {hasKey && !idea && !sourceImage && (
                  <button
                      onClick={() => setIsHelpOpen(true)}
-                     className="absolute top-3 right-3 flex md:hidden items-center justify-center w-8 h-8 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 z-20"
+                     className="absolute top-2 right-2 sm:top-3 sm:right-3 flex lg:hidden items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 z-20"
                  >
-                     <Sparkles size={14} />
+                     <Sparkles size={12} className="sm:w-4 sm:h-4" />
                  </button>
              )}
 
             {/* Right Actions (Absolute positioned) */}
-            <div className="absolute right-3 bottom-3 md:top-1/2 md:-translate-y-1/2 flex items-center gap-2 z-20">
+            <div className="absolute right-2 bottom-2 sm:right-3 sm:bottom-3 lg:top-1/2 lg:-translate-y-1/2 flex items-center gap-1 sm:gap-2 z-20">
                 
                 {/* Image Upload */}
                 <div className="relative">
                     <button 
                         onClick={!sourceImage ? triggerFileInput : clearImage}
-                        className={`p-3 rounded-xl transition-colors relative group/tooltip ${sourceImage ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/20' : 'text-gray-400 hover:text-white hover:bg-white/10 border border-transparent'}`}
+                        className={`p-2 sm:p-3 rounded-lg sm:rounded-xl transition-colors relative group/tooltip ${sourceImage ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/20' : 'text-gray-400 hover:text-white hover:bg-white/10 border border-transparent'}`}
                         title={sourceImage ? "Remove Image" : "Upload Reference Image"}
                     >
-                        {sourceImage ? <X size={20} /> : <ImagePlus size={20} />}
+                        {sourceImage ? <X size={16} className="sm:w-5 sm:h-5" /> : <ImagePlus size={16} className="sm:w-5 sm:h-5" />}
                     </button>
                     <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" className="hidden" />
                 </div>
@@ -252,7 +250,7 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
                 <button
                     onClick={onGenerate}
                     disabled={!canGenerate}
-                    className={`h-12 w-12 flex items-center justify-center rounded-xl transition-all transform active:scale-95 ${
+                    className={`h-10 w-10 sm:h-12 sm:w-12 flex items-center justify-center rounded-lg sm:rounded-xl transition-all transform active:scale-95 ${
                         !canGenerate
                         ? 'bg-white/5 text-gray-600 cursor-not-allowed'
                         : 'bg-white text-black hover:bg-gray-200 shadow-lg shadow-white/10'
@@ -260,9 +258,9 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
                     title={(!hasSelectedPlatform && !includeVideo) ? "Select at least one platform or video" : "Generate Content"}
                 >
                     {isGenerating ? (
-                        <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                        <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
                     ) : (
-                        <Send size={20} className="ml-0.5" />
+                        <Send size={16} className="sm:w-5 sm:h-5 ml-0.5" />
                     )}
                 </button>
             </div>
@@ -270,11 +268,11 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
 
          {/* Image Preview (if uploaded) */}
          {sourceImage && (
-             <div className="mt-4 p-2 bg-zinc-900/90 border border-white/10 rounded-2xl backdrop-blur-md animate-fade-in flex items-center gap-4 relative z-10">
-                 <img src={sourceImage} alt="Reference" className="h-16 w-16 object-cover rounded-xl border border-white/10" />
-                 <div>
-                     <p className="text-sm font-medium text-white">Reference Image Uploaded</p>
-                     <p className="text-xs text-gray-400">We'll use this as inspiration</p>
+             <div className="mt-3 sm:mt-4 p-2 sm:p-3 bg-zinc-900/90 border border-white/10 rounded-lg sm:rounded-xl lg:rounded-2xl backdrop-blur-md animate-fade-in flex items-center gap-3 sm:gap-4 relative z-10">
+                 <img src={sourceImage} alt="Reference" className="h-12 w-12 sm:h-14 sm:w-14 lg:h-16 lg:w-16 object-cover rounded-lg sm:rounded-xl border border-white/10" />
+                 <div className="flex-1 min-w-0">
+                     <p className="text-xs sm:text-sm font-medium text-white truncate">Reference Image Uploaded</p>
+                     <p className="text-xs text-gray-400 truncate">We'll use this as inspiration</p>
                  </div>
              </div>
          )}
@@ -282,32 +280,32 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
 
       {/* Help Me Write Modal/Popover */}
       {isHelpOpen && (
-          <div className="absolute top-0 left-0 w-full h-full bg-zinc-900/95 backdrop-blur-xl rounded-3xl z-30 flex flex-col items-center justify-center p-6 animate-fade-in border border-emerald-500/20">
-              <div className="w-full max-w-md space-y-4">
+          <div className="fixed inset-4 sm:absolute sm:top-0 sm:left-0 sm:w-full sm:h-full bg-zinc-900/95 backdrop-blur-xl rounded-lg sm:rounded-2xl lg:rounded-3xl z-30 flex flex-col items-center justify-center p-4 sm:p-6 animate-fade-in border border-emerald-500/20 sm:relative">
+              <div className="w-full max-w-md space-y-3 sm:space-y-4">
                   <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                          <Sparkles size={18} className="text-emerald-400" />
+                      <h3 className="text-base sm:text-lg font-bold text-white flex items-center gap-1 sm:gap-2">
+                          <Sparkles size={14} className="sm:w-5 sm:h-5 text-emerald-400" />
                           Help me write
                       </h3>
                       <button onClick={() => setIsHelpOpen(false)} disabled={isImproving} className="text-gray-500 hover:text-white disabled:opacity-50">
-                          <X size={18} />
+                          <X size={16} className="sm:w-5 sm:h-5" />
                       </button>
                   </div>
                   
                   {isImproving ? (
-                      <div className="h-32 flex flex-col items-center justify-center gap-3 text-center animate-fade-in">
-                          <div className="w-8 h-8 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
-                          <p className="text-sm text-emerald-400 font-medium animate-pulse">Drafting your masterpiece...</p>
+                      <div className="h-24 sm:h-32 flex flex-col items-center justify-center gap-2 sm:gap-3 text-center animate-fade-in">
+                          <div className="w-6 h-6 sm:w-8 sm:h-8 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
+                          <p className="text-xs sm:text-sm text-emerald-400 font-medium animate-pulse">Drafting your masterpiece...</p>
                       </div>
                   ) : (
                       <>
-                        <p className="text-sm text-gray-400">Briefly describe what you want to post about, and I'll draft a detailed prompt for you.</p>
+                        <p className="text-xs sm:text-sm text-gray-400">Briefly describe what you want to post about, and I'll draft a detailed prompt for you.</p>
                         <textarea 
                             autoFocus
                             value={helpInput}
                             onChange={(e) => setHelpInput(e.target.value)}
                             placeholder="e.g. A coffee shop announcing a halloween special..."
-                            className="w-full bg-black/50 border border-white/10 rounded-xl p-4 text-white placeholder:text-gray-600 focus:border-emerald-500/50 focus:ring-0 resize-none h-32"
+                            className="w-full bg-black/50 border border-white/10 rounded-lg sm:rounded-xl p-3 sm:p-4 text-white placeholder:text-gray-600 focus:border-emerald-500/50 focus:ring-0 resize-none h-24 sm:h-32 text-sm sm:text-base"
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter' && !e.shiftKey) {
                                     e.preventDefault();
@@ -322,16 +320,16 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
                       <button 
                           onClick={() => setIsHelpOpen(false)}
                           disabled={isImproving}
-                          className="px-4 py-2 text-sm text-gray-400 hover:text-white disabled:opacity-50"
+                          className="px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm text-gray-400 hover:text-white disabled:opacity-50"
                       >
                           Cancel
                       </button>
                       <button 
                           onClick={handleHelpSubmit}
                           disabled={!helpInput.trim() || isImproving}
-                          className="px-6 py-2 bg-emerald-500 text-black font-bold rounded-lg hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                          className="px-4 py-1.5 sm:px-6 sm:py-2 bg-emerald-500 text-black font-bold rounded-lg hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
                       >
-                          {isImproving ? 'Drafting...' : 'Draft'} <Wand2 size={14} />
+                          {isImproving ? 'Drafting...' : 'Draft'} <Wand2 size={12} className="sm:w-4 sm:h-4" />
                       </button>
                   </div>
               </div>
@@ -339,79 +337,79 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
       )}
 
       {/* Settings / Options Bar */}
-      <div className="mt-6 flex flex-col md:flex-row items-center justify-center gap-6 animate-fade-in">
+      <div className="mt-4 sm:mt-6 flex flex-col md:flex-row items-center justify-center gap-4 sm:gap-6 animate-fade-in">
          
          {/* Platform Selector */}
-         <div className="flex flex-col items-center gap-2 w-full md:w-auto">
-            <span className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Target Platforms</span>
-            <div className={`flex items-center bg-zinc-900/50 border rounded-full p-1 transition-colors ${!hasSelectedPlatform ? 'border-red-500/50 animate-pulse' : 'border-white/5'}`}>
+         <div className="flex flex-col items-center gap-1 sm:gap-2 w-full md:w-auto">
+            <span className="text-[10px] sm:text-xs uppercase tracking-wider text-gray-500 font-semibold">Target Platforms</span>
+            <div className={`flex items-center bg-zinc-900/50 border rounded-full p-0.5 sm:p-1 transition-colors ${!hasSelectedPlatform ? 'border-red-500/50 animate-pulse' : 'border-white/5'}`}>
                 <button 
                     onClick={() => togglePlatform(Platform.LINKEDIN)}
-                    className={`p-2 rounded-full transition-all ${selectedPlatforms[Platform.LINKEDIN] ? 'bg-blue-600/20 text-blue-400' : 'text-gray-500 hover:text-gray-300'}`}
+                    className={`p-1.5 sm:p-2 rounded-full transition-all ${selectedPlatforms[Platform.LINKEDIN] ? 'bg-blue-600/20 text-blue-400' : 'text-gray-500 hover:text-gray-300'}`}
                     title="LinkedIn"
                 >
-                    <Linkedin size={16} />
+                    <Linkedin size={12} className="sm:w-4 sm:h-4" />
                 </button>
                 <button 
                     onClick={() => togglePlatform(Platform.TWITTER)}
-                    className={`p-2 rounded-full transition-all ${selectedPlatforms[Platform.TWITTER] ? 'bg-white/20 text-white' : 'text-gray-500 hover:text-gray-300'}`}
+                    className={`p-1.5 sm:p-2 rounded-full transition-all ${selectedPlatforms[Platform.TWITTER] ? 'bg-white/20 text-white' : 'text-gray-500 hover:text-gray-300'}`}
                     title="X"
                 >
-                    <XIcon size={16} />
+                    <XIcon size={12} className="sm:w-4 sm:h-4" />
                 </button>
                 <button 
                     onClick={() => togglePlatform(Platform.INSTAGRAM)}
-                    className={`p-2 rounded-full transition-all ${selectedPlatforms[Platform.INSTAGRAM] ? 'bg-pink-500/20 text-pink-400' : 'text-gray-500 hover:text-gray-300'}`}
+                    className={`p-1.5 sm:p-2 rounded-full transition-all ${selectedPlatforms[Platform.INSTAGRAM] ? 'bg-pink-500/20 text-pink-400' : 'text-gray-500 hover:text-gray-300'}`}
                     title="Instagram"
                 >
-                    <Instagram size={16} />
+                    <Instagram size={12} className="sm:w-4 sm:h-4" />
                 </button>
                 <button 
                     onClick={() => togglePlatform(Platform.FACEBOOK)}
-                    className={`p-2 rounded-full transition-all ${selectedPlatforms[Platform.FACEBOOK] ? 'bg-blue-500/20 text-blue-400' : 'text-gray-500 hover:text-gray-300'}`}
+                    className={`p-1.5 sm:p-2 rounded-full transition-all ${selectedPlatforms[Platform.FACEBOOK] ? 'bg-blue-500/20 text-blue-400' : 'text-gray-500 hover:text-gray-300'}`}
                     title="Facebook"
                 >
-                    <Facebook size={16} />
+                    <Facebook size={12} className="sm:w-4 sm:h-4" />
                 </button>
                 <button 
                     onClick={() => togglePlatform(Platform.PINTEREST)}
-                    className={`p-2 rounded-full transition-all ${selectedPlatforms[Platform.PINTEREST] ? 'bg-red-600/20 text-red-500' : 'text-gray-500 hover:text-gray-300'}`}
+                    className={`p-1.5 sm:p-2 rounded-full transition-all ${selectedPlatforms[Platform.PINTEREST] ? 'bg-red-600/20 text-red-500' : 'text-gray-500 hover:text-gray-300'}`}
                     title="Pinterest"
                 >
-                    <PinterestIcon size={16} />
+                    <PinterestIcon size={12} className="sm:w-4 sm:h-4" />
                 </button>
             </div>
-            {(!hasSelectedPlatform && !includeVideo) && <span className="text-[10px] text-red-400">Select at least one</span>}
+            {(!hasSelectedPlatform && !includeVideo) && <span className="text-[10px] text-red-400 mt-0.5">Select at least one</span>}
          </div>
 
-         <div className="hidden md:block w-px h-8 bg-white/10" />
+         <div className="hidden md:block w-px h-6 sm:h-8 bg-white/10" />
 
          {/* Tone Selector (Horizontal Scroll) */}
-         <div className="flex flex-col items-center gap-2 w-full md:w-auto max-w-full md:max-w-md relative group/tones">
-            <span className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Tone of Voice</span>
+         <div className="flex flex-col items-center gap-1 sm:gap-2 w-full md:w-auto max-w-full md:max-w-md relative group/tones">
+            <span className="text-[10px] sm:text-xs uppercase tracking-wider text-gray-500 font-semibold">Tone of Voice</span>
             
             <div className="relative w-full flex items-center">
-                {/* Left Scroll Button */}
+                {/* Left Scroll Button - Hidden on mobile */}
                 <button 
                     onClick={() => {
                         const container = document.getElementById('tone-scroll-container');
                         if (container) container.scrollBy({ left: -100, behavior: 'smooth' });
                     }}
-                    className="absolute left-0 z-10 p-1.5 bg-zinc-900/80 backdrop-blur-sm border border-white/10 rounded-full text-gray-400 hover:text-white hover:bg-zinc-800 shadow-lg -ml-3 hidden md:flex opacity-0 group-hover/tones:opacity-100 transition-opacity"
+                    className="absolute left-0 z-10 p-1 bg-zinc-900/80 backdrop-blur-sm border border-white/10 rounded-full text-gray-400 hover:text-white hover:bg-zinc-800 shadow-lg -ml-2 hidden md:flex opacity-0 group-hover/tones:opacity-100 transition-opacity"
                 >
-                    <ChevronDown size={12} className="rotate-90" />
+                    <ChevronDown size={10} className="rotate-90 sm:w-3 sm:h-3" />
                 </button>
 
                 <div 
                     id="tone-scroll-container"
-                    className="flex items-center bg-zinc-900/50 border border-white/5 rounded-full p-1 w-full overflow-x-auto no-scrollbar mask-linear-fade scroll-smooth"
+                    className="flex items-center bg-zinc-900/50 border border-white/5 rounded-full p-0.5 sm:p-1 w-full overflow-x-auto no-scrollbar mask-linear-fade scroll-smooth"
                 >
-                    <div className="flex gap-1 px-1">
+                    <div className="flex gap-0.5 sm:gap-1 px-0.5 sm:px-1">
                         {Object.values(Tone).map((t) => (
                             <button
                                 key={t}
                                 onClick={() => setTone(t)}
-                                className={`px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
+                                className={`px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-medium whitespace-nowrap transition-all ${
                                 tone === t
                                     ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/20'
                                     : 'text-gray-400 hover:text-white hover:bg-white/5'
@@ -423,42 +421,41 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
                     </div>
                 </div>
 
-                {/* Right Scroll Button */}
+                {/* Right Scroll Button - Hidden on mobile */}
                 <button 
                     onClick={() => {
                         const container = document.getElementById('tone-scroll-container');
                         if (container) container.scrollBy({ left: 100, behavior: 'smooth' });
                     }}
-                    className="absolute right-0 z-10 p-1.5 bg-zinc-900/80 backdrop-blur-sm border border-white/10 rounded-full text-gray-400 hover:text-white hover:bg-zinc-800 shadow-lg -mr-3 hidden md:flex opacity-0 group-hover/tones:opacity-100 transition-opacity"
+                    className="absolute right-0 z-10 p-1 bg-zinc-900/80 backdrop-blur-sm border border-white/10 rounded-full text-gray-400 hover:text-white hover:bg-zinc-800 shadow-lg -mr-2 hidden md:flex opacity-0 group-hover/tones:opacity-100 transition-opacity"
                 >
-                    <ChevronDown size={12} className="-rotate-90" />
+                    <ChevronDown size={10} className="-rotate-90 sm:w-3 sm:h-3" />
                 </button>
             </div>
          </div>
 
-         <div className="hidden md:block w-px h-8 bg-white/10" />
+         <div className="hidden md:block w-px h-6 sm:h-8 bg-white/10" />
 
          {/* Right Controls Group */}
-         <div className="flex flex-wrap justify-center items-center gap-4 w-full md:w-auto">
+         <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-4 w-full md:w-auto">
              
              {/* Video Toggle */}
-             <div className="flex flex-col items-center gap-2">
-                <span className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Video</span>
+             <div className="flex flex-col items-center gap-1 sm:gap-2">
+                <span className="text-[10px] sm:text-xs uppercase tracking-wider text-gray-500 font-semibold">Video</span>
                 <button 
                     onClick={() => setIncludeVideo(!includeVideo)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-medium transition-all shadow-lg ${
+                    className={`flex items-center gap-1 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full border text-[10px] sm:text-xs font-medium transition-all shadow-lg min-h-[36px] ${
                         includeVideo 
                         ? 'bg-gradient-to-r from-teal-500/20 to-emerald-500/20 border-teal-500/50 text-teal-300 shadow-teal-500/10' 
                         : 'bg-zinc-900/50 border-white/5 text-gray-400 hover:bg-white/5'
                     }`}
                     title="Generate a video based on your idea"
                 >
-                    <MonitorPlay size={14} />
-                    {includeVideo ? 'Generate Video' : 'Generate Video'}
+                    <MonitorPlay size={12} className="sm:w-4 sm:h-4" />
+                    <span className="hidden xs:inline">{includeVideo ? 'Generate Video' : 'Generate Video'}</span>
+                    <span className="inline xs:hidden">Video</span>
                 </button>
              </div>
-
-
          </div>
       </div>
     </div>

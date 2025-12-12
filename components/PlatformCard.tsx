@@ -266,29 +266,31 @@ const PlatformCard: React.FC<PlatformCardProps> = ({ post, isLoading, isGenerati
       </div>
       </div>
 
-      {/* Footer Actions */}
-      <div className="px-6 py-4 bg-white/5 border-t border-white/5 flex items-center justify-between">
-        <span className="text-xs text-gray-500 font-medium">
+      {/* Footer Actions - Made responsive */}
+      <div className="px-4 sm:px-6 py-3 sm:py-4 bg-white/5 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-0">
+        <span className="text-xs text-gray-500 font-medium order-2 sm:order-1">
             {editedContent.length} chars
         </span>
-        <div className="flex gap-2">
+        <div className="flex gap-2 order-1 sm:order-2 w-full sm:w-auto justify-between sm:justify-end">
             <button 
                 onClick={onDownloadClick}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm bg-white/5 text-gray-300 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all"
+                className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-medium text-sm bg-white/5 text-gray-300 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all flex-1 sm:flex-none justify-center min-w-[100px]"
             >
                 <Download size={16} />
-                Download
+                <span className="hidden sm:inline">Download</span>
+                <span className="sm:hidden">DL</span>
             </button>
             <button 
                 onClick={handleCopy}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all ${
+                className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-medium text-sm transition-all flex-1 sm:flex-none justify-center min-w-[100px] ${
                     copied 
                     ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
                     : 'bg-white/5 text-gray-300 border border-white/10 hover:bg-white/10 hover:border-white/20'
                 }`}
             >
                 {copied ? <Check size={16} /> : <Copy size={16} />}
-                {copied ? 'Copied!' : 'Copy Text'}
+                <span className="hidden sm:inline">{copied ? 'Copied!' : 'Copy Text'}</span>
+                <span className="sm:hidden">{copied ? '✓' : 'Copy'}</span>
             </button>
         </div>
       </div>
