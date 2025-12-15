@@ -309,7 +309,7 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
 
       {/* Help Me Write Modal/Popover */}
       {isHelpOpen && (
-          <div className="fixed inset-0 sm:absolute sm:top-0 sm:left-0 sm:w-full sm:h-full bg-zinc-900/95 backdrop-blur-xl z-50 flex flex-col items-center justify-center p-4 sm:p-6 animate-fade-in border border-emerald-500/20 sm:relative">
+          <div className="fixed inset-0 sm:absolute sm:top-0 sm:left-0 sm:w-full sm:h-full bg-zinc-900/95 backdrop-blur-xl z-50 flex flex-col items-center justify-center p-4 sm:p-6 animate-fade-in border border-emerald-500/20 sm:relative rounded-lg sm:rounded-2xl lg:rounded-3xl">
               <div className="w-full max-w-md space-y-3 sm:space-y-4">
                   <div className="flex items-center justify-between">
                       <h3 className="text-base sm:text-lg font-bold text-white flex items-center gap-1 sm:gap-2">
