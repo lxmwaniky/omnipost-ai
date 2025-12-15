@@ -61,6 +61,7 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
   const [isImproving, setIsImproving] = useState(false);
   const [isRatioOpen, setIsRatioOpen] = useState(false);
   const ratioRef = useRef<HTMLDivElement>(null);
+  const [showHelpButton, setShowHelpButton] = useState(true);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -68,6 +69,7 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
       const reader = new FileReader();
       reader.onloadend = () => {
         setSourceImage(reader.result as string);
+        setShowHelpButton(false);
       };
       reader.readAsDataURL(file);
     }
@@ -81,6 +83,9 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
     e.stopPropagation();
     setSourceImage(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
+    if (!idea.trim()) {
+      setShowHelpButton(true);
+    }
   };
 
   const handleImprovePrompt = async () => {
@@ -166,23 +171,33 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
     }
   }, [idea]);
 
-    const [isHelpOpen, setIsHelpOpen] = useState(false);
-    const [helpInput, setHelpInput] = useState('');
+  // Handle Help button visibility
+  useEffect(() => {
+    if (idea.trim() || sourceImage) {
+      setShowHelpButton(false);
+    } else if (!idea.trim() && !sourceImage) {
+      setShowHelpButton(true);
+    }
+  }, [idea, sourceImage]);
 
-    const handleHelpSubmit = async () => {
-        if (!helpInput.trim()) return;
-        setIsImproving(true);
-        try {
-            const improved = await improvePrompt(helpInput, null); 
-            setIdea(improved);
-            setHelpInput('');
-            setIsHelpOpen(false);
-        } catch (e) {
-            console.error(e);
-        } finally {
-            setIsImproving(false);
-        }
-    };
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [helpInput, setHelpInput] = useState('');
+
+  const handleHelpSubmit = async () => {
+      if (!helpInput.trim()) return;
+      setIsImproving(true);
+      try {
+          const improved = await improvePrompt(helpInput, null); 
+          setIdea(improved);
+          setHelpInput('');
+          setIsHelpOpen(false);
+          setShowHelpButton(false);
+      } catch (e) {
+          console.error(e);
+      } finally {
+          setIsImproving(false);
+      }
+  };
 
   return (
     <div className="w-full mx-auto relative z-20">
@@ -198,7 +213,18 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
             <textarea
                 ref={textareaRef}
                 value={idea}
-                onChange={(e) => setIdea(e.target.value)}
+                onChange={(e) => {
+                  setIdea(e.target.value);
+                  if (e.target.value.trim()) {
+                    setShowHelpButton(false);
+                  }
+                }}
+                onFocus={() => setShowHelpButton(false)}
+                onBlur={() => {
+                  if (!idea.trim() && !sourceImage) {
+                    setShowHelpButton(true);
+                  }
+                }}
                 onKeyDown={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
@@ -210,24 +236,14 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
                 style={{ scrollbarWidth: 'none' }}
             />
 
-             {/* Help Me Write Badge (Only if empty) */}
-             {hasKey && !idea && !sourceImage && (
+             {/* Desktop Help Me Write Button (Inside textarea) */}
+             {hasKey && showHelpButton && !idea && !sourceImage && (
                  <button
                      onClick={() => setIsHelpOpen(true)}
-                     className="absolute bottom-2 left-3 sm:bottom-3 sm:left-4 flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-medium transition-all border backdrop-blur-md z-20 bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20 animate-fade-in-up lg:flex hidden"
+                     className="absolute bottom-2 left-3 sm:bottom-3 sm:left-4 hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all border backdrop-blur-md z-20 bg-emerald-500 text-black hover:bg-emerald-400 animate-fade-in-up"
                  >
-                     <Sparkles size={10} className="sm:w-3 sm:h-3" />
-                     <span className="hidden sm:inline">Help me write</span>
-                 </button>
-             )}
-
-             {/* Mobile Help Badge (Top Right) */}
-             {hasKey && !idea && !sourceImage && (
-                 <button
-                     onClick={() => setIsHelpOpen(true)}
-                     className="absolute top-2 right-2 sm:top-3 sm:right-3 flex lg:hidden items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 z-20"
-                 >
-                     <Sparkles size={12} className="sm:w-4 sm:h-4" />
+                     <Sparkles size={12} />
+                     <span>Help me write</span>
                  </button>
              )}
 
@@ -266,6 +282,19 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
             </div>
          </div>
 
+         {/* Mobile Help Me Write Button (Below textarea) */}
+         {hasKey && showHelpButton && !idea && !sourceImage && (
+             <div className="flex md:hidden justify-center mt-3 animate-fade-in">
+                 <button
+                     onClick={() => setIsHelpOpen(true)}
+                     className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium transition-all border backdrop-blur-md z-20 bg-emerald-500 text-black hover:bg-emerald-400 shadow-lg shadow-emerald-500/30 active:scale-95"
+                 >
+                     <Sparkles size={12} />
+                     <span>Help me write</span>
+                 </button>
+             </div>
+         )}
+
          {/* Image Preview (if uploaded) */}
          {sourceImage && (
              <div className="mt-3 sm:mt-4 p-2 sm:p-3 bg-zinc-900/90 border border-white/10 rounded-lg sm:rounded-xl lg:rounded-2xl backdrop-blur-md animate-fade-in flex items-center gap-3 sm:gap-4 relative z-10">
@@ -280,7 +309,7 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
 
       {/* Help Me Write Modal/Popover */}
       {isHelpOpen && (
-          <div className="fixed inset-4 sm:absolute sm:top-0 sm:left-0 sm:w-full sm:h-full bg-zinc-900/95 backdrop-blur-xl rounded-lg sm:rounded-2xl lg:rounded-3xl z-30 flex flex-col items-center justify-center p-4 sm:p-6 animate-fade-in border border-emerald-500/20 sm:relative">
+          <div className="fixed inset-0 sm:absolute sm:top-0 sm:left-0 sm:w-full sm:h-full bg-zinc-900/95 backdrop-blur-xl z-50 flex flex-col items-center justify-center p-4 sm:p-6 animate-fade-in border border-emerald-500/20 sm:relative">
               <div className="w-full max-w-md space-y-3 sm:space-y-4">
                   <div className="flex items-center justify-between">
                       <h3 className="text-base sm:text-lg font-bold text-white flex items-center gap-1 sm:gap-2">
