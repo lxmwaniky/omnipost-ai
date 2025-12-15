@@ -238,7 +238,7 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
              {hasKey && showHelpButton && !idea && !sourceImage && (
                  <button
                      onClick={() => setIsHelpOpen(true)}
-                     className="absolute bottom-2 left-3 sm:bottom-3 sm:left-4 hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all border backdrop-blur-md z-20 bg-emerald-500 text-black hover:bg-emerald-400 animate-fade-in-up"
+                     className="absolute bottom-2 left-3 sm:bottom-3 sm:left-4 hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all border backdrop-blur-md z-20 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 animate-fade-in-up"
                  >
                      <Sparkles size={12} />
                      <span>Help me write</span>
