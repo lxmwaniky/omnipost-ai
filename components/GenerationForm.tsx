@@ -219,7 +219,6 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
                     setShowHelpButton(false);
                   }
                 }}
-                onFocus={() => setShowHelpButton(false)}
                 onBlur={() => {
                   if (!idea.trim() && !sourceImage) {
                     setShowHelpButton(true);
