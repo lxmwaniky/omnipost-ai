@@ -191,7 +191,6 @@ const GenerationForm: React.FC<GenerationFormProps> = ({
           setIdea(improved);
           setHelpInput('');
           setIsHelpOpen(false);
-          setShowHelpButton(false);
       } catch (e) {
           console.error(e);
       } finally {
