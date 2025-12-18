@@ -86,6 +86,31 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  // Handle removing a platform card
+  const handleRemoveCard = (platform: Platform) => {
+    // Deselect the platform
+    setSelectedPlatforms(prev => ({ ...prev, [platform]: false }));
+    
+    // Remove results for that platform
+    setResults(prev => {
+      if (!prev) return prev;
+      const newResults = { ...prev };
+      
+      // Remove the platform from results
+      const platformKey = platform.toLowerCase() as keyof GeneratedContent;
+      if (newResults[platformKey]) {
+        delete newResults[platformKey];
+      }
+      
+      // If no results left, clear the entire results
+      if (Object.keys(newResults).length === 0) {
+        return null;
+      }
+      
+      return newResults;
+    });
+  };
+
   const handleGenerate = useCallback(async () => {
     if (!hasKey) {
       await handleSelectKey();
@@ -318,60 +343,77 @@ const Dashboard: React.FC = () => {
                     </div>
                 )}
 
-                {/* Results Grid */}
-                <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6`}>
+                {/* Results Grid - Removed scrollbars */}
+                <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6 overflow-hidden`}>
                     {selectedPlatforms[Platform.LINKEDIN] && (
-                        <PlatformCard 
-                            platform={Platform.LINKEDIN} 
-                            post={results?.linkedin || null} 
-                            isLoading={isGenerating && !results} 
-                            isGenerating={isGenerating}
-                            onDownload={handleDownloadAttempt}
-                        />
+                        <div className="overflow-hidden rounded-2xl">
+                          <PlatformCard 
+                              platform={Platform.LINKEDIN} 
+                              post={results?.linkedin || null} 
+                              isLoading={isGenerating && !results} 
+                              isGenerating={isGenerating}
+                              onDownload={handleDownloadAttempt}
+                              onRemove={() => handleRemoveCard(Platform.LINKEDIN)}
+                          />
+                        </div>
                     )}
                     {selectedPlatforms[Platform.TWITTER] && (
-                        <PlatformCard 
-                            platform={Platform.TWITTER} 
-                            post={results?.twitter || null} 
-                            isLoading={isGenerating && !results} 
-                            isGenerating={isGenerating}
-                            onDownload={handleDownloadAttempt}
-                        />
+                        <div className="overflow-hidden rounded-2xl">
+                          <PlatformCard 
+                              platform={Platform.TWITTER} 
+                              post={results?.twitter || null} 
+                              isLoading={isGenerating && !results} 
+                              isGenerating={isGenerating}
+                              onDownload={handleDownloadAttempt}
+                              onRemove={() => handleRemoveCard(Platform.TWITTER)}
+                          />
+                        </div>
                     )}
                     {selectedPlatforms[Platform.INSTAGRAM] && (
-                        <PlatformCard 
-                            platform={Platform.INSTAGRAM} 
-                            post={results?.instagram || null} 
-                            isLoading={isGenerating && !results} 
-                            isGenerating={isGenerating}
-                            onDownload={handleDownloadAttempt}
-                        />
+                        <div className="overflow-hidden rounded-2xl">
+                          <PlatformCard 
+                              platform={Platform.INSTAGRAM} 
+                              post={results?.instagram || null} 
+                              isLoading={isGenerating && !results} 
+                              isGenerating={isGenerating}
+                              onDownload={handleDownloadAttempt}
+                              onRemove={() => handleRemoveCard(Platform.INSTAGRAM)}
+                          />
+                        </div>
                     )}
                     {selectedPlatforms[Platform.FACEBOOK] && (
-                        <PlatformCard 
-                            platform={Platform.FACEBOOK} 
-                            post={results?.facebook || null} 
-                            isLoading={isGenerating && !results} 
-                            isGenerating={isGenerating}
-                            onDownload={handleDownloadAttempt}
-                        />
+                        <div className="overflow-hidden rounded-2xl">
+                          <PlatformCard 
+                              platform={Platform.FACEBOOK} 
+                              post={results?.facebook || null} 
+                              isLoading={isGenerating && !results} 
+                              isGenerating={isGenerating}
+                              onDownload={handleDownloadAttempt}
+                              onRemove={() => handleRemoveCard(Platform.FACEBOOK)}
+                          />
+                        </div>
                     )}
                     {selectedPlatforms[Platform.PINTEREST] && (
-                        <PlatformCard 
-                            platform={Platform.PINTEREST} 
-                            post={results?.pinterest || null} 
-                            isLoading={isGenerating && !results} 
-                            isGenerating={isGenerating}
-                            onDownload={handleDownloadAttempt}
-                        />
+                        <div className="overflow-hidden rounded-2xl">
+                          <PlatformCard 
+                              platform={Platform.PINTEREST} 
+                              post={results?.pinterest || null} 
+                              isLoading={isGenerating && !results} 
+                              isGenerating={isGenerating}
+                              onDownload={handleDownloadAttempt}
+                              onRemove={() => handleRemoveCard(Platform.PINTEREST)}
+                          />
+                        </div>
                     )}
                     
                     {(includeVideo || results?.video || isVideoGenerating) && (
-                        <VideoCard 
-                            videoPost={results?.video}
-                            isLoading={isVideoGenerating}
-                            onDownload={handleDownloadAttempt}
-                        />
+                        <div className="overflow-hidden rounded-xl sm:rounded-xl">
+                          <VideoCard 
+                              videoPost={results?.video}
+                              isLoading={isVideoGenerating}
+                              onDownload={handleDownloadAttempt}
+                          />
+                        </div>
                     )}
                 </div>
              </div>

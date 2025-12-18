@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { SocialPost, Platform } from '../types';
-import { Copy, Download, Image as ImageIcon, Maximize2, Loader2, Pencil, Check, ChevronLeft, ChevronRight, Linkedin, Instagram, Facebook, Share2 } from 'lucide-react';
+import { Copy, Download, Image as ImageIcon, Maximize2, Loader2, Pencil, Check, ChevronLeft, ChevronRight, Linkedin, Instagram, Facebook, Share2, X, Minus } from 'lucide-react';
 
 // Custom X Icon
 const XIcon = ({ size = 16, className = "" }: { size?: number, className?: string }) => (
@@ -36,17 +36,19 @@ interface PlatformCardProps {
   isGenerating: boolean;
   platform: Platform;
   onDownload: (url: string, filename: string) => void;
+  onRemove?: () => void;
+  onMinimize?: () => void;
 }
 
 // Helper functions moved outside component to avoid scope issues
 const getHeaderColor = (platform: Platform) => {
    switch (platform) {
-      case Platform.LINKEDIN: return "bg-blue-600/10 text-blue-400";
-      case Platform.TWITTER: return "bg-white/10 text-white";
-      case Platform.INSTAGRAM: return "bg-pink-500/10 text-pink-400";
-      case Platform.FACEBOOK: return "bg-blue-500/10 text-blue-400";
-      case Platform.PINTEREST: return "bg-red-600/10 text-red-500";
-      default: return "bg-gray-500/10 text-gray-400";
+      case Platform.LINKEDIN: return "bg-blue-600/10 text-blue-400 border-b border-blue-500/20";
+      case Platform.TWITTER: return "bg-white/10 text-white border-b border-white/20";
+      case Platform.INSTAGRAM: return "bg-pink-500/10 text-pink-400 border-b border-pink-500/20";
+      case Platform.FACEBOOK: return "bg-blue-500/10 text-blue-400 border-b border-blue-500/20";
+      case Platform.PINTEREST: return "bg-red-600/10 text-red-500 border-b border-red-600/20";
+      default: return "bg-gray-500/10 text-gray-400 border-b border-gray-500/20";
    }
 };
 
@@ -86,10 +88,19 @@ const LoadingMessage = () => {
     );
 };
 
-const PlatformCard: React.FC<PlatformCardProps> = ({ post, isLoading, isGenerating, platform, onDownload }) => {
+const PlatformCard: React.FC<PlatformCardProps> = ({ 
+  post, 
+  isLoading, 
+  isGenerating, 
+  platform, 
+  onDownload,
+  onRemove,
+  onMinimize
+}) => {
   const [copied, setCopied] = useState(false);
   const [editedContent, setEditedContent] = useState('');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isMinimized, setIsMinimized] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Sync local state with prop when post changes
@@ -102,11 +113,11 @@ const PlatformCard: React.FC<PlatformCardProps> = ({ post, isLoading, isGenerati
 
   // Auto-resize textarea
   useEffect(() => {
-    if (textareaRef.current) {
+    if (textareaRef.current && !isMinimized) {
       textareaRef.current.style.height = 'auto';
       textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
     }
-  }, [editedContent]);
+  }, [editedContent, isMinimized]);
 
   const handleCopy = () => {
     if (!post) return;
@@ -138,9 +149,20 @@ const PlatformCard: React.FC<PlatformCardProps> = ({ post, isLoading, isGenerati
     }
   };
 
+  const handleRemove = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onRemove) onRemove();
+  };
+
+  const handleMinimize = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsMinimized(!isMinimized);
+    if (onMinimize) onMinimize();
+  };
+
   if (isLoading) {
     return (
-      <div className="h-full min-h-[400px] bg-zinc-900/50 backdrop-blur-md rounded-2xl border border-white/10 p-6 shadow-sm flex flex-col animate-pulse">
+      <div className="h-full min-h-[400px] bg-zinc-900/50 backdrop-blur-md rounded-2xl border-2 border-white/20 p-6 shadow-lg shadow-black/20 flex flex-col animate-pulse overflow-hidden">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-full bg-white/10" />
           <div className="h-4 w-32 bg-white/10 rounded" />
@@ -150,7 +172,7 @@ const PlatformCard: React.FC<PlatformCardProps> = ({ post, isLoading, isGenerati
           <div className="h-4 w-3/4 bg-white/10 rounded" />
           <div className="h-4 w-5/6 bg-white/10 rounded" />
         </div>
-        <div className="flex-1 bg-white/5 rounded-xl w-full aspect-square" />
+        <div className="flex-1 bg-white/5 rounded-xl w-full aspect-square border border-white/10" />
       </div>
     );
   }
@@ -165,135 +187,236 @@ const PlatformCard: React.FC<PlatformCardProps> = ({ post, isLoading, isGenerati
   const currentImageUrl = post.imageUrls?.[currentImageIndex];
 
   return (
-    <div className="bg-zinc-900/50 backdrop-blur-md rounded-2xl border border-white/10 shadow-lg hover:shadow-xl hover:border-white/20 transition-all flex flex-col overflow-hidden group h-full">
-      {/* Header */}
-      <div className={`px-4 py-3 border-b border-white/5 flex items-center justify-between ${getHeaderColor(platform)}`}>
+    <div className="bg-zinc-900/80 backdrop-blur-xl rounded-2xl border-2 border-white/20 shadow-xl hover:shadow-2xl hover:border-emerald-500/30 transition-all duration-300 flex flex-col overflow-hidden group h-full w-full mx-auto">
+      {/* Header with controls */}
+      <div className={`px-4 py-3 ${getHeaderColor(platform)} flex items-center justify-between`}>
         <div className="flex items-center gap-2">
           {getPlatformIcon(platform)}
           <span className="font-bold text-sm tracking-wide">{platform}</span>
         </div>
-        <div className="flex gap-2">
-            {hasMultipleImages && (
-                <span className="text-xs text-gray-500 font-medium">
-                    {currentImageIndex + 1} / {post.imageUrls!.length}
-                </span>
-            )}
-        </div>
-      </div>
-
-      {/* Content Area */}
-      <div className="p-4 space-y-4 flex-grow flex flex-col">
-        <div className="relative group flex-grow">
-            <textarea
-                ref={textareaRef}
-                value={editedContent}
-                onChange={(e) => setEditedContent(e.target.value)}
-                className="w-full bg-transparent text-gray-300 text-sm resize-none focus:outline-none focus:text-white transition-colors min-h-[80px]"
-                placeholder="Write your caption here..."
-                spellCheck={false}
-            />
-            <Pencil size={12} className="absolute top-0 right-0 text-gray-600 opacity-0 group-hover:opacity-100 pointer-events-none" />
-        </div>
         
-        {/* Hashtags */}
-        {post.hashtags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-                {post.hashtags.map((tag, i) => (
-                    <span key={i} className="text-blue-400 text-sm hover:underline cursor-pointer">#{tag}</span>
-                ))}
-            </div>
-        )}
-
-        {/* Generated Image */}
-      <div className="relative aspect-video bg-black/30 border-y border-white/10 overflow-hidden group">
-        {isGenerating ? ( 
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-             <div className="w-full h-full bg-white/5 animate-pulse relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer" />
-             </div>
-             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-                <div className="p-3 bg-white/5 rounded-full animate-bounce">
-                    <ImageIcon size={24} className="text-gray-500" />
-                </div>
-                <LoadingMessage />
-             </div>
-          </div>
-        ) : post?.imageUrls && post.imageUrls.length > 0 ? (
-          <>
-            <img 
-              src={post.imageUrls[currentImageIndex]} 
-              alt="Generated content" 
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 pointer-events-none"
-              onContextMenu={(e) => e.preventDefault()} // Disable right-click
-            />
-            
-            {/* Image Navigation (if multiple) */}
-            {post.imageUrls.length > 1 && (
-                <>
-                    <button 
-                        onClick={prevImage}
-                        className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 bg-black/50 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70"
-                    >
-                        <ChevronLeft size={16} />
-                    </button>
-                    <button 
-                        onClick={nextImage}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-black/50 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70"
-                    >
-                        <ChevronRight size={16} />
-                    </button>
-                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
-                        {post.imageUrls.map((_, idx) => (
-                            <div key={idx} className={`w-1.5 h-1.5 rounded-full ${idx === currentImageIndex ? 'bg-white' : 'bg-white/30'}`} />
-                        ))}
-                    </div>
-                </>
-            )}
+        <div className="flex items-center gap-2">
+          {hasMultipleImages && !isMinimized && (
+              <span className="text-xs text-gray-300 font-medium bg-black/30 px-2 py-1 rounded-full">
+                  {currentImageIndex + 1} / {post.imageUrls!.length}
+              </span>
+          )}
+          
+          <div className="flex gap-1">
+            <button 
+              onClick={handleMinimize}
+              className="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-gray-400 hover:text-white"
+              title={isMinimized ? "Expand" : "Minimize"}
+            >
+              <Minus size={16} />
+            </button>
             
             <button 
-                onClick={() => window.open(currentImageUrl, '_blank')}
-                className="absolute top-2 right-2 p-2 bg-black/50 text-white rounded-full opacity-0 group-hover/image:opacity-100 transition-opacity hover:bg-black/70"
+              onClick={handleRemove}
+              className="p-1.5 hover:bg-red-500/20 rounded-lg transition-colors text-gray-400 hover:text-red-400"
+              title="Remove card"
             >
-                <Maximize2 size={14} />
+              <X size={16} />
             </button>
-          </>
-        ) : (
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-500 gap-2">
-            <ImageIcon size={32} className="opacity-20" />
-            <span className="text-xs opacity-40">No image generated</span>
           </div>
-        )}
-      </div>
-      </div>
-
-      {/* Footer Actions - Made responsive */}
-      <div className="px-4 sm:px-6 py-3 sm:py-4 bg-white/5 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-0">
-        <span className="text-xs text-gray-500 font-medium order-2 sm:order-1">
-            {editedContent.length} chars
-        </span>
-        <div className="flex gap-2 order-1 sm:order-2 w-full sm:w-auto justify-between sm:justify-end">
-            <button 
-                onClick={onDownloadClick}
-                className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-medium text-sm bg-white/5 text-gray-300 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all flex-1 sm:flex-none justify-center min-w-[100px]"
-            >
-                <Download size={16} />
-                <span className="hidden sm:inline">Download</span>
-                <span className="sm:hidden">DL</span>
-            </button>
-            <button 
-                onClick={handleCopy}
-                className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-medium text-sm transition-all flex-1 sm:flex-none justify-center min-w-[100px] ${
-                    copied 
-                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
-                    : 'bg-white/5 text-gray-300 border border-white/10 hover:bg-white/10 hover:border-white/20'
-                }`}
-            >
-                {copied ? <Check size={16} /> : <Copy size={16} />}
-                <span className="hidden sm:inline">{copied ? 'Copied!' : 'Copy Text'}</span>
-                <span className="sm:hidden">{copied ? '✓' : 'Copy'}</span>
-            </button>
         </div>
       </div>
+
+      {/* Content Area - Minimizable */}
+      {!isMinimized ? (
+        <div className="p-4 space-y-4 flex-grow flex flex-col overflow-hidden">
+          <div className="relative group flex-grow overflow-hidden">
+              <textarea
+                  ref={textareaRef}
+                  value={editedContent}
+                  onChange={(e) => setEditedContent(e.target.value)}
+                  className="w-full bg-transparent text-gray-300 text-sm resize-none focus:outline-none focus:text-white transition-colors min-h-[80px] border border-white/10 rounded-lg p-3 focus:border-emerald-500/30 overflow-y-auto"
+                  placeholder="Write your caption here..."
+                  spellCheck={false}
+                  style={{ scrollbarWidth: 'none' }}
+              />
+              <style jsx>{`
+                textarea::-webkit-scrollbar {
+                  display: none;
+                }
+              `}</style>
+              <Pencil size={12} className="absolute top-3 right-3 text-gray-600 opacity-0 group-hover:opacity-100 pointer-events-none" />
+          </div>
+          
+          {/* Hashtags */}
+          {post.hashtags.length > 0 && (
+              <div className="flex flex-wrap gap-2 overflow-hidden">
+                  {post.hashtags.map((tag, i) => (
+                      <span key={i} className="text-blue-400 text-sm hover:underline cursor-pointer bg-blue-500/10 px-2 py-1 rounded-full flex-shrink-0">
+                          #{tag}
+                      </span>
+                  ))}
+              </div>
+          )}
+
+          {/* Generated Image */}
+          <div className="relative aspect-video bg-black/30 border-2 border-white/10 rounded-xl overflow-hidden group">
+            {isGenerating ? ( 
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <div className="w-full h-full bg-white/5 animate-pulse relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer" />
+                </div>
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                    <div className="p-3 bg-white/5 rounded-full animate-bounce border border-white/10">
+                        <ImageIcon size={24} className="text-gray-500" />
+                    </div>
+                    <LoadingMessage />
+                </div>
+              </div>
+            ) : post?.imageUrls && post.imageUrls.length > 0 ? (
+              <>
+                <img 
+                  src={post.imageUrls[currentImageIndex]} 
+                  alt="Generated content" 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 pointer-events-none"
+                  onContextMenu={(e) => e.preventDefault()} // Disable right-click
+                />
+                
+                {/* Image Navigation (if multiple) */}
+                {post.imageUrls.length > 1 && (
+                    <>
+                        <button 
+                            onClick={prevImage}
+                            className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-black/70 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all hover:bg-black/90 hover:scale-110 border border-white/20"
+                        >
+                            <ChevronLeft size={18} />
+                        </button>
+                        <button 
+                            onClick={nextImage}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-black/70 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all hover:bg-black/90 hover:scale-110 border border-white/20"
+                        >
+                            <ChevronRight size={18} />
+                        </button>
+                        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                            {post.imageUrls.map((_, idx) => (
+                                <div key={idx} className={`w-2 h-2 rounded-full ${idx === currentImageIndex ? 'bg-white' : 'bg-white/40'}`} />
+                            ))}
+                        </div>
+                    </>
+                )}
+                
+                <button 
+                    onClick={() => window.open(currentImageUrl, '_blank')}
+                    className="absolute top-3 right-3 p-2 bg-black/70 text-white rounded-full opacity-0 group-hover/image:opacity-100 transition-all hover:bg-black/90 hover:scale-110 border border-white/20"
+                >
+                    <Maximize2 size={16} />
+                </button>
+              </>
+            ) : (
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-500 gap-2 bg-gradient-to-br from-black/50 to-zinc-900/50">
+                <ImageIcon size={32} className="opacity-20" />
+                <span className="text-xs opacity-40">No image generated</span>
+              </div>
+            )}
+          </div>
+        </div>
+      ) : (
+        // Minimized state
+        <div className="p-4 text-center overflow-hidden">
+          <div className="flex items-center justify-center gap-2 text-gray-400">
+            <Minus size={16} />
+            <span className="text-sm truncate">Minimized - Click {platform} above to expand</span>
+          </div>
+        </div>
+      )}
+
+      {/* Footer Actions */}
+      {/* Footer Actions - Redesigned */}
+{!isMinimized && (
+  <div className="px-3 sm:px-4 py-2.5 sm:py-3 bg-gradient-to-t from-black/40 to-transparent border-t border-white/10 flex items-center justify-between gap-2 overflow-hidden">
+    
+    {/* Character Count - Minimal */}
+    <div className="flex items-center gap-1.5">
+      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/60 animate-pulse"></div>
+      <span className="text-xs text-gray-400 font-medium">
+        {editedContent.length}
+      </span>
+    </div>
+
+    {/* Button Group - Compact & Cool */}
+    <div className="flex gap-1.5 sm:gap-2">
+      
+      {/* Download Button */}
+      <button 
+        onClick={onDownloadClick}
+        className="group relative px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg font-medium text-xs transition-all duration-200 overflow-hidden"
+      >
+        {/* Background & Border */}
+        <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-white/10 border border-white/20 group-hover:border-emerald-500/40 group-active:border-emerald-500/60 transition-colors rounded-lg"></div>
+        
+        {/* Hover Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-emerald-500/0 opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-300"></div>
+        
+        {/* Content */}
+        <div className="relative flex items-center gap-1.5 sm:gap-2">
+          <Download size={12} className="sm:w-3.5 sm:h-3.5 text-emerald-400 group-hover:text-emerald-300 group-active:text-emerald-200 transition-colors" />
+          <span className="hidden xs:inline text-gray-300 group-hover:text-white group-active:text-white transition-colors">
+            Download
+          </span>
+          <span className="inline xs:hidden text-gray-300 group-hover:text-white group-active:text-white transition-colors">
+            Download
+          </span>
+        </div>
+      </button>
+
+      {/* Copy Button */}
+      <button 
+        onClick={handleCopy}
+        className={`group relative px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg font-medium text-xs transition-all duration-200 overflow-hidden ${
+          copied ? 'scale-95' : ''
+        }`}
+      >
+        {/* Background & Border */}
+        <div className={`absolute inset-0 border rounded-lg transition-colors ${
+          copied 
+            ? 'bg-emerald-500/10 border-emerald-500/40' 
+            : 'bg-white/5 border-white/20 group-hover:border-cyan-500/40 group-active:border-cyan-500/60'
+        }`}></div>
+        
+        {/* Hover/Active Gradient */}
+        <div className={`absolute inset-0 bg-gradient-to-r rounded-lg transition-opacity duration-300 ${
+          copied 
+            ? 'from-emerald-500/20 via-emerald-500/10 to-emerald-500/20 opacity-100' 
+            : 'from-cyan-500/0 via-cyan-500/5 to-cyan-500/0 opacity-0 group-hover:opacity-100 group-active:opacity-100'
+        }`}></div>
+        
+        {/* Pulsing Success Effect */}
+        {copied && (
+          <div className="absolute inset-0 bg-emerald-500/10 animate-pulse rounded-lg"></div>
+        )}
+        
+        {/* Content */}
+        <div className="relative flex items-center gap-1.5 sm:gap-2">
+          {copied ? (
+            <Check size={12} className="sm:w-3.5 sm:h-3.5 text-emerald-400" />
+          ) : (
+            <Copy size={12} className="sm:w-3.5 sm:h-3.5 text-cyan-400 group-hover:text-cyan-300 group-active:text-cyan-200 transition-colors" />
+          )}
+          <span className={`hidden xs:inline transition-colors ${
+            copied 
+              ? 'text-emerald-400' 
+              : 'text-gray-300 group-hover:text-white group-active:text-white'
+          }`}>
+            {copied ? 'Copied!' : 'Copy'}
+          </span>
+          <span className={`inline xs:hidden transition-colors ${
+            copied 
+              ? 'text-emerald-400' 
+              : 'text-gray-300 group-hover:text-white group-active:text-white'
+          }`}>
+            {copied ? '✓' : 'Copy'}
+          </span>
+        </div>
+      </button>
+
+    </div>
+  </div>
+)}
     </div>
   );
 };
