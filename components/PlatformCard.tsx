@@ -318,7 +318,7 @@ const PlatformCard: React.FC<PlatformCardProps> = ({
         <div className="p-4 text-center overflow-hidden">
           <div className="flex items-center justify-center gap-2 text-gray-400">
             <Minus size={16} />
-            <span className="text-sm truncate">Minimized - Click {platform} above to expand</span>
+            <span className="text-sm truncate">Minimized - Click the expand button above to show content</span>
           </div>
         </div>
       )}
