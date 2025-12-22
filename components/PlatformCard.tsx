@@ -156,10 +156,8 @@ const PlatformCard: React.FC<PlatformCardProps> = ({
 
   const handleMinimize = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsMinimized(!isMinimized);
-    if (onMinimize) onMinimize();
+    setIsMinimized((prev) => !prev);
   };
-
   if (isLoading) {
     return (
       <div className="h-full min-h-[400px] bg-zinc-900/50 backdrop-blur-md rounded-2xl border-2 border-white/20 p-6 shadow-lg shadow-black/20 flex flex-col animate-pulse overflow-hidden">
